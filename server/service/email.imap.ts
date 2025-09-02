@@ -79,9 +79,29 @@ export class ImapEmailService {
 
     constructor(callback: (emails: Array<EmailImpl>) => void) {
         this.imap = new Imap(imapConfig);
-        this.imap.once('error', () => { setTimeout(() => this.imap.connect(), 5000) });
-        this.imap.once('end', () => { setTimeout(() => this.imap.connect(), 5000) });
+        this.imap.once('error', (e: Error) => {
+            console.error('Connection error:', e);
+            setTimeout(() => {
+                this.imap.connect();
+            }, 5000)
+        });
+        this.imap.once('end', () => {
+            console.log('Connection ended. Attempting to reconnect...');
+            setTimeout(() => {
+                this.imap.connect();
+            }, 5000)
+        });
         this.imap.once('ready', () => { openInboxAndStartIdle(this.imap, callback) });
         this.imap.connect();
+
+        setInterval(async () => {
+            const unseens = await new Promise<number[]>((resolve) => {
+                this.imap.search(['SEEN'], (err, uids) => {
+                    if (err) resolve([]);
+                    resolve(uids);
+                });
+            });
+            console.log(new Date(), 'Alive Success, fetch unseens:', unseens.length);
+        }, 10 * 60 * 1000); // 每10分钟一次
     }
 }
