@@ -70,12 +70,12 @@ const EmailPage = () => {
                             <TableRow key={row.from + row.to + row.time}>
                                 <TableCell className="w-50">
                                     <div>
-                                        <span className="mr-1">
+                                        <div className="mr-1">
                                             {row.from.split(" ")[0].replace(/[\"]/g, "")}
-                                        </span>
-                                        <span className="text-xs text-gray-400">
-                                            ({row.from.split(" ")[1].replace(/[<>]/g, "")})
-                                        </span>
+                                        </div>
+                                        <div className="text-xs text-gray-400">
+                                            {row.from.split(" ").length > 1 ? "(" + row.from.split(" ")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
+                                        </div>
                                     </div>
                                 </TableCell>
                                 <TableCell className="w-50">
