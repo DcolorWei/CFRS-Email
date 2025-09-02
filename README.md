@@ -1,4 +1,7 @@
-# 全栈项目说明
+# CFRS-Email
+
+## 项目介绍
+本项目旨在使用 Cloudflare Email + Resend 实现一个自定义邮箱集成服务。支持邮件接收，多邮箱管理，转发策略设置，以及实现发信服务。
 
 本项目为全栈应用，前端基于 [React](https://react.dev/) [HeroUI](https://heroicons.com/) ，后端基于 [Express](https://expressjs.com/)，使用[TypeScript](https://www.typescriptlang.org/) 进行开发，推荐使用 [Bun](https://bun.sh/)。
 
@@ -13,8 +16,8 @@
 ### 克隆项目
 
 ```bash
-git clone https://github.com/FlowAurelia/quick-clipboard
-cd quick-clipboard
+git clone https://github.com/DcolorWei/CFRS-Email
+cd CFRS-Email
 ```
 
 ### 安装依赖
@@ -56,6 +59,11 @@ npm run server
 ```
 
 ## 构建与部署
+```bash
+npm run build
+```
+将在 dist 目录下生成前端静态打包文件，可部署到任何静态文件服务器中；同时生成bundle.mjs文件，可部署到任何支持Node.js的服务器中。
+
 
 ## 许可证
 
