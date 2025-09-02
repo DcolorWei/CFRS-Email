@@ -24,7 +24,14 @@ const EmailContentModal = ({
                         <Chip color="primary" className="text-white w-15">
                             <div className="w-12 text-center">发件人</div>
                         </Chip>
-                        <div className="text-sm ml-1">{email.from.split("<")[1].slice(0, -1)}</div>
+                        <div className="text-sm ml-1">
+                            <div className="mr-1">
+                                {email.from.split(" ")[0].replace(/[\"]/g, "")}
+                            </div>
+                            <div className="text-xs ">
+                                {email.from.split(" ").length > 1 ? "(" + email.from.split(" ")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
+                            </div>
+                        </div>
                     </div>
                     <div className="flex flex-row items-center ml-5">
                         <Chip color="primary" className="text-white">
@@ -64,11 +71,11 @@ const EmailContentModal = ({
     }
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} className="w-full">
-            <ModalContent className="md:min-w-[800px]">
+            <ModalContent className="md:min-w-[800px] max-h-[80vh]">
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col">邮件详情</ModalHeader>
-                        <ModalBody>
+                        <ModalBody className="overflow-y-auto">
                             <ModalBodyContent />
                         </ModalBody>
                         <ModalFooter>
