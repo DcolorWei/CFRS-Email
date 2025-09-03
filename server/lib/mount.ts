@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 import { BaseRouterInstance, BaseWebsocketInstance, WSMessage } from "../../shared/lib/decorator";
 import { Server } from "ws";
-import { wsService } from "./webscoket";
+import { WebSocketServerService } from "./webscoket";
 
 export function mounthttp(expressApp: Express, controllers: BaseRouterInstance[]) {
     const interfaceList: Array<{ base: string, prefix: string, path: string, method: string }> = [];
@@ -36,6 +36,8 @@ export function mounthttp(expressApp: Express, controllers: BaseRouterInstance[]
 }
 
 export function mountws(wss: Server, controllers: BaseWebsocketInstance[]) {
+    const wsService = WebSocketServerService.getInstance();
+
     const allMethods = controllers.flatMap(controller => controller.methods);
     if (new Set(allMethods.map(method => method.name)).size !== allMethods.length) {
         throw new Error("There are duplicate method names in the controller.");
@@ -45,18 +47,27 @@ export function mountws(wss: Server, controllers: BaseWebsocketInstance[]) {
         });
     }
     wss.on('connection', ws => {
-        const id = wsService.addClient(ws);
-        console.log(`Client ${id} connected.`);
+        const clientId = wsService.addClient(ws);
+        console.log(`Client ${clientId} connected.`);
         ws.on('message', async message => {
+            // message的结构为name，type，payload
+            // 注入方法的目的在于实现这样的流程
+            // 当收到message时，获取id，name，type，payload，此处的name要存在于注入方法的列表中
+            // 若type为single,则立即调用注入方法，执行handle(payload)并返回结果给客户端
+            // 若type为continuous,则将name，type，payload保存在listener中，等待服务器同名事件触发后，会持续返回
             const msg: WSMessage = JSON.parse(message.toString());
-            console.log(`Received message from client ${id}: ${JSON.stringify(msg)}`);
-            const { handler } = allMethods.find(method => method.name === msg.name)!;
+            const { name, payload } = msg;
+            const { handler, type } = allMethods.find(method => method.name === name)!;
             if (!handler) {
-                const result = JSON.stringify({ requestId: msg.id, success: false, error: "Method not found." });
-                wsService.sendMessage(id, result);
-            } else {
-                const result = JSON.stringify({ requestId: msg.id, success: true, payload: await handler(msg.payload) });
-                wsService.sendMessage(id, result);
+                const result = JSON.stringify({ success: false, error: "Method not found." });
+                wsService.sendMessage(clientId, result);
+            } else if (type === "single") {
+                const result = JSON.stringify({ success: true, name, data: await handler(payload) });
+                wsService.sendMessage(clientId, result);
+            } else if (type === "continuous") {
+                const result = JSON.stringify({ success: true, name, data: await handler(payload) });
+                wsService.sendMessage(clientId, result);
+                wsService.listenEvent(clientId, name, handler, payload);
             }
         });
     });

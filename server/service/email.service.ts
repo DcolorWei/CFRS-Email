@@ -1,6 +1,7 @@
 import { EmailImpl } from "../../shared/impl";
 import { EmailEntity } from "../../shared/types/Email";
 import Repository from "../lib/respository";
+import { WebSocketServerService } from "../lib/webscoket";
 import { ImapEmailService } from "./email.imap";
 
 const emailRepository = Repository.instance(EmailEntity);
@@ -20,5 +21,8 @@ export async function getEmailByEmail(email: string): Promise<Array<EmailImpl>> 
 }
 
 export async function saveReceivedEmail(emails: Array<EmailImpl>): Promise<boolean> {
-    return emailRepository.insertMany(emails);
+    const wsService = WebSocketServerService.getInstance();
+    const result = emailRepository.insertMany(emails);
+    wsService.triggerEvent("queryEmailList", JSON.stringify(emails));
+    return result;
 }

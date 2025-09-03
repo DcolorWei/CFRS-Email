@@ -1,12 +1,19 @@
 import { WebSocket } from "ws";
 
-class WebSocketServerService {
+export class WebSocketServerService {
     private static instance: WebSocketServerService;
 
     private clients: Array<{
         id: string,
         ws: WebSocket,
         connect_time: number
+    }> = [];
+
+    private listeners: Array<{
+        id: string,
+        event: string,
+        handler: Function,
+        payload: string
     }> = [];
 
     private constructor() {
@@ -22,6 +29,7 @@ class WebSocketServerService {
         }
         return WebSocketServerService.instance;
     }
+
     public addClient(ws: WebSocket): string {
         const id = Date.now().toString(36).slice(4, 10) + Math.random().toString(36).slice(4, 10);
         const connect_time = Date.now();
@@ -34,11 +42,26 @@ class WebSocketServerService {
         if (client) client.connect_time = Date.now();
     }
 
+    public listenEvent(id: string, event: string, handler: Function, payload: string) {
+        if (this.listeners.find(listener => listener.id === id && listener.event === event)) {
+            return;
+        }
+        this.listeners.push({ id, event, handler, payload });
+        console.log(`[${id}] set event listener: ${event}`)
+    }
+
+    public triggerEvent(event: string, payload: string) {
+        this.listeners.filter(l => l.event === event).forEach(async listener => {
+            console.log(`[${listener.id}] trigger event: ${event}`);
+            const handler = listener.handler;
+            const result = JSON.stringify({ success: true, name: event, data: await handler(payload) });
+            this.sendMessage(listener.id, result);
+        });
+    }
+
     public sendMessage(id: string, message: string): void {
         const client = this.clients.find(client => client.id === id);
         if (!client) { return }
         client.ws.send(message);
     }
 }
-
-export const wsService = WebSocketServerService.getInstance();
