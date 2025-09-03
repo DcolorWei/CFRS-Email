@@ -12,13 +12,9 @@ export interface BaseRouterInstance {
     }>;
     [key: string]: any;
 }
-
-export type MessageType = "single" | "continuous";
-export interface WSMessage { id: string, name: string, payload: string, type: MessageType }
-export interface BaseWebsocketInstance {
-    methods: Array<{
-        name: string;
-        type: string;
-        handler: Function | null;
-    }>;
+export type MethodConstructor = { name: string; type: string; handler: Function | null; };
+export interface WSMessage { id: string, name: string, payload: string, type: string }
+export class BaseWebsocketInstance {
+    methods: Array<MethodConstructor>;
+    [key: string]: MethodConstructor[] | ((...args: any) => Promise<string>);
 }

@@ -1,5 +1,5 @@
 import { EmailImpl } from "../impl";
-import { BaseRouterInstance, BaseWebsocketInstance, MessageType } from "../lib/decorator";
+import { BaseRouterInstance, BaseWebsocketInstance, MethodConstructor } from "../lib/decorator";
 
 export class EmailRouterInstance implements BaseRouterInstance {
     base = "/api";
@@ -22,20 +22,18 @@ export class EmailRouterInstance implements BaseRouterInstance {
     }
 }
 
-export class EmailWebsocketInstance implements BaseWebsocketInstance {
+export class EmailWebsocketInstance extends BaseWebsocketInstance {
     methods = [
         {
             name: "queryEmailList",
-            type: "single",
+            type: "continuous",
             handler: Function
         }
     ];
-    queryEmailList: (query: EmailListQuery) => Promise<EmailListResponse>;
+    queryEmailList: (query: EmailListQuery) => Promise<string>;
     constructor(inject: Function, functions?: {
         queryEmailList: (query: EmailListQuery) => Promise<EmailListResponse>,
-    }) {
-        inject(this, functions);
-    }
+    }) { super(); inject(this, functions); }
 }
 
 export interface EmailListQuery {
@@ -45,16 +43,6 @@ export interface EmailListQuery {
 }
 
 export interface EmailListResponse {
-    success: boolean;
     list: EmailImpl[];
     total: number;
-}
-
-export interface EmailSetBody {
-    name: string;
-    value: string;
-}
-
-export interface EmailSetResponse {
-    success: boolean;
 }
