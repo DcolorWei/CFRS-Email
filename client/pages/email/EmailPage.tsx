@@ -1,13 +1,12 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
-import { EmailRouter } from "../../api/instance";
+import { EmailRouter, EmailWebsocket } from "../../api/instance";
 import { addToast, Button, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { keyLables } from "./EmailEnums";
 import EmailContentModal from "./EmailContent";
-import { wsService } from "../../lib/websocket";
-"#1c66cb"
-"#014ACF"
+import { WebSocketClientService } from "../../lib/websocket";
+
 const EmailPage = () => {
     const [emailList, setEmailList] = useState<EmailImpl[]>([]);
     const [focusEmail, setFocusEmail] = useState<EmailImpl | null>(null);
@@ -27,9 +26,12 @@ const EmailPage = () => {
         });
     }
     useEffect(() => {
-        EmailRouter.queryEmailList({ page: 1 }).then(res => {
-            setEmailList(res.list);
-        });
+        EmailWebsocket.queryEmailList({ page: 1 }).then(res => {
+            window.addEventListener('queryEmailList', function (event) {
+                const { list } = event["detail"];
+                setEmailList(list);
+            });
+        })
     }, [])
 
     return (

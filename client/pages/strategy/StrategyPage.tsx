@@ -5,9 +5,11 @@ import { EmailRouter } from "../../api/instance";
 import { addToast, Button, Checkbox, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { keyLables } from "./StrategyEnums";
 import EmailContentModal from "./StrategyContent";
-import { wsService } from "../../lib/websocket";
+import { WebSocketClientService } from "../../lib/websocket";
 
 const StrategyPage = () => {
+    const wsService = WebSocketClientService.getInstance("ws://localhost:61027");
+
     const [emailList, setEmailList] = useState<string[]>([]);
     const [focusEmail, setFocusEmail] = useState<string | null>(null);
     const [isEmailContentOpen, setEmailContentOpen] = useState(false);

@@ -1,40 +1,36 @@
-import { initStorageListener, storageChangeEvent } from './localstorage.ts';
 
-// 定义消息监听器的类型
-type MessageListener = (event: MessageEvent) => void;
-
-class WebSocketClientService {
+export class WebSocketClientService {
     private static instance: WebSocketClientService;
     private ws: WebSocket | null;
-    private messageListeners: Set<MessageListener>;
 
-    private constructor() {
+    private constructor(url: string) {
         this.ws = null;
-        this.messageListeners = new Set<MessageListener>();
-        this.connect('ws://localhost:3003');
-        initStorageListener();
+        this.connect(url);
     }
 
-    public static getInstance(): WebSocketClientService {
+    public static getInstance(url: string): WebSocketClientService {
         if (!WebSocketClientService.instance) {
-            WebSocketClientService.instance = new WebSocketClientService();
+            WebSocketClientService.instance = new WebSocketClientService(url);
         }
         return WebSocketClientService.instance;
     }
 
-    public connect(url: string): void {
+    private connect(url: string): void {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
         this.ws = new WebSocket(url);
         this.ws.onmessage = (event: MessageEvent) => {
-            this.messageListeners.forEach(listener => listener(event));
+            const { success, name, data: detail } = JSON.parse(event.data);
+            if (success) {
+                const event = new CustomEvent(name, { detail, bubbles: true });
+                window.dispatchEvent(event);
+            }
         };
-
     }
-    public sendMessage(message: string): void {
+
+    public async sendMessage(message: string): Promise<void> {
+        await new Promise(resolve => setTimeout(resolve, 1000));
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(message);
         }
     }
 }
-
-export const wsService = WebSocketClientService.getInstance();

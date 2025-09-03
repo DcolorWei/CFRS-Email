@@ -1,5 +1,5 @@
 import { BaseRouterInstance, BaseWebsocketInstance, Route } from "../../shared/lib/decorator";
-import { Server } from "ws";
+import { WebSocketClientService } from "./websocket";
 
 export function inject(instance: BaseRouterInstance) {
     const { base, prefix, router } = instance;
@@ -30,30 +30,20 @@ export function inject(instance: BaseRouterInstance) {
         route.handler = null;
     })
 }
-export function injectws(wss: Server, controllers: BaseWebsocketInstance[]) {
-    const allMethods = controllers.flatMap(controller => controller.methods);
-    if (new Set(allMethods.map(method => method.name)).size !== allMethods.length) {
+// export function injectws(wss: Server, controllers: BaseWebsocketInstance[]) {
+export function injectws(instance: BaseWebsocketInstance) {
+    if (new Set(instance.methods.map(method => method.name)).size !== instance.methods.length) {
         throw new Error("There are duplicate method names in the controller.");
     }
-    wss.on('connection', ws => {
-        ws.on('message', async message => {
-            const msg: { id: string, name: string, payload: string } = JSON.parse(message.toString());
-            const { handler } = allMethods.find(method => method.name === msg.name)!;
-            if (!handler) {
-                ws.send(JSON.stringify({
-                    requestId: msg.id,
-                    success: false,
-                    error: "Method not found."
-                }));
-                return;
-            } else {
-                const result = await handler(msg.payload);
-                ws.send(JSON.stringify({
-                    requestId: msg.id,
-                    success: true,
-                    payload: result
-                }));
-            }
-        });
-    });
+    const ws = WebSocketClientService.getInstance("ws://127.0.0.1:61207");
+    instance.methods.forEach(method => {
+        const { name, type } = method;
+        instance[name] = async (payload: string) => {
+            const id = Date.now().toString(36);
+            const message = JSON.stringify({ id, name, payload, type })
+            ws.sendMessage(message);
+            return id;
+        }
+    })
+
 }

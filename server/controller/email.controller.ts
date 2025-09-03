@@ -14,12 +14,12 @@ async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse>
     }
     list.reverse();
     const result: EmailListResponse = {
-        success: true,
         list: list,
         total: list.length,
     }
     return result;
 }
+
 
 export const emailController = new EmailRouterInstance(inject, { queryEmailList });
 export const emailWSController = new EmailWebsocketInstance(injectws, { queryEmailList });
