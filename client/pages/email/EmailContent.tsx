@@ -25,12 +25,12 @@ const EmailContentModal = ({
                             <div className="w-12 text-center">发件人</div>
                         </Chip>
                         <div className="text-sm ml-1">
-                            <div className="mr-1">
+                            <span className="mr-1">
                                 {email.from.split(" ")[0].replace(/[\"]/g, "")}
-                            </div>
-                            <div className="text-xs ">
+                            </span>
+                            <span className="text-gray-500">
                                 {email.from.split(" ").length > 1 ? "(" + email.from.split(" ")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
-                            </div>
+                            </span>
                         </div>
                     </div>
                     <div className="flex flex-row items-center ml-5">
