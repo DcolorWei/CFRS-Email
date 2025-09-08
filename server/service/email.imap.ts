@@ -32,7 +32,9 @@ async function parsedMailFromMsg(imap: Imap, msg: Imap.ImapMessage) {
             stream.once('end', async () => r(ck));
         });
         msg.once('attributes', (attrs) => {
-            imap.addFlags(attrs.uid, ['\\Seen'], () => { });
+            setTimeout(() => {
+                imap.addFlags(attrs.uid, ['\\Seen'], () => { });
+            }, 5000)
         });
     });
     const parsed = await simpleParser(origin);

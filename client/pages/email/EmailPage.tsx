@@ -37,6 +37,7 @@ const EmailPage = () => {
     }
 
     useEffect(() => {
+        EmailRouter.queryEmailList({ page: 1 });
         EmailWebsocket.queryEmailList({ page: 1 });
         window.addEventListener('queryEmailList', function (event) {
             const detail: { list: Array<EmailImpl> } = event["detail"];
