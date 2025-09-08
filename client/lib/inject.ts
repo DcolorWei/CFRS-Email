@@ -11,7 +11,10 @@ export function inject(instance: BaseRouterInstance) {
                 const final_url = url + "?" + new URLSearchParams(query).toString();
                 return await fetch(final_url, { method: "get" })
                     .then(r => r.json())
-                    .then(data => data);
+                    .then(data => {
+                        const event = new CustomEvent(name, { detail: data, bubbles: true });
+                        window.dispatchEvent(event);
+                    });
             }
         }
         if (method === "post") {
@@ -23,7 +26,10 @@ export function inject(instance: BaseRouterInstance) {
                         headers: { "Content-Type": "application/json" }
                     })
                     .then(r => r.json())
-                    .then(data => data);
+                    .then(data => {
+                        const event = new CustomEvent(name, { detail: data, bubbles: true });
+                        window.dispatchEvent(event);
+                    });
             }
         }
         // 置空函数
@@ -35,7 +41,8 @@ export function injectws(instance: BaseWebsocketInstance) {
     if (new Set(instance.methods.map(method => method.name)).size !== instance.methods.length) {
         throw new Error("There are duplicate method names in the controller.");
     }
-    const ws = WebSocketClientService.getInstance("ws://127.0.0.1:61207");
+    const host = location.host;
+    const ws = WebSocketClientService.getInstance(`wss://${host}/ws`);
     instance.methods.forEach(method => {
         const { name, type } = method;
         instance[name] = async (payload: string) => {

@@ -25,7 +25,7 @@ app.listen(process.env.SERVER_HTTP_PORT, async () => {
 });
 
 // 中间件-websocket
-const wss = new WebSocketServer({ port: Number(process.env.SERVER_WS_PORT) }, () => {
+const wss = new WebSocketServer({ port: Number(process.env.SERVER_WS_PORT), path: '/ws' }, () => {
     console.log(`App websocket listening at ws://localhost:${process.env.SERVER_WS_PORT}`);
 });
 mountws(wss, [
