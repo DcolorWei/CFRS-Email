@@ -8,10 +8,13 @@ import EmailContentModal from "./EmailContent";
 import { WebSocketClientService } from "../../lib/websocket";
 
 const EmailPage = () => {
-    const [emailList, setEmailList] = useState<EmailImpl[]>([]);
+    const [allEmailList, setAllEmailList] = useState<EmailImpl[]>([]);
+    const [showEmailList, setShowEmailList] = useState<EmailImpl[]>([]);
+
     const [focusEmail, setFocusEmail] = useState<EmailImpl | null>(null);
     const [isEmailContentOpen, setEmailContentOpen] = useState(false);
 
+    const [accountList, setAccountList] = useState<Array<string>>([]);
     const [filterTo, setFilterTo] = useState<Array<string>>([]);
 
     async function getRandomEmail() {
@@ -25,13 +28,23 @@ const EmailPage = () => {
             color: "success",
         });
     }
+
+    function setFilter(value: Array<string>) {
+        setFilterTo(value);
+        console.log(value);
+        const els = allEmailList.filter(i => value.length ? value.includes(i.to) : true);
+        setShowEmailList(els);
+    }
+
     useEffect(() => {
-        EmailWebsocket.queryEmailList({ page: 1 }).then(res => {
-            window.addEventListener('queryEmailList', function (event) {
-                const { list } = event["detail"];
-                setEmailList(list);
-            });
-        })
+        EmailWebsocket.queryEmailList({ page: 1 });
+        window.addEventListener('queryEmailList', function (event) {
+            const detail: { list: Array<EmailImpl> } = event["detail"];
+            setAllEmailList(detail.list);
+            setShowEmailList(detail.list);
+            const accountList = Array.from(new Set(detail.list.map((email) => email.to)));
+            setAccountList(accountList);
+        });
     }, [])
 
     return (
@@ -39,37 +52,40 @@ const EmailPage = () => {
             <Header name="邮件列表" />
             <div className="w-full flex flex-col flex-wrap px-[5vw] pt-6">
                 <div className="flex flex-row justify-between items-center w-full py-3">
-                    <div className="flex-row">
-                        <div className="w-32 text-sm mr-2">Filter Reciever</div>
+                    <div className="flex-row w-full">
                         <Select
-                            aria-label="select" variant="bordered" multiple
-                            defaultSelectedKeys={filterTo}
-                            onSelectionChange={(value) => {
+                            aria-label="select"
+                            variant="bordered"
+                            selectionMode="multiple"
+                            className="w-1/3"
+                            label="筛选收件人"
+                            size="sm"
+                            selectedKeys={filterTo}
+                            onSelectionChange={(value) => setFilter(Array.from(value).map(i => {
                                 console.log(value);
-                            }}
+                                return i.toString();
+                            }))}
                         >
-                            {Array.from(new Set(emailList.map((email) => email.to))).map((email) => (
+                            {accountList.map((email) => (
                                 <SelectItem key={email}>{email}</SelectItem>
                             ))}
                         </Select>
                     </div>
-                    <div className="mt-5">
-                        <Button onClick={getRandomEmail} color="primary" className="h7 text-white">
-                            获取新邮箱
-                        </Button>
-                    </div>
+                    <Button onClick={getRandomEmail} color="primary" className="text-white">
+                        获取新邮箱
+                    </Button>
                 </div>
                 <Table aria-label="table" isStriped>
                     <TableHeader>
-                        {keyLables.map((item) => {
+                        {keyLables.map((item, index) => {
                             return (
-                                <TableColumn key={item.key} align="center">{item.label}</TableColumn>
+                                <TableColumn key={index} align="center">{item.label}</TableColumn>
                             )
                         })}
                     </TableHeader>
                     <TableBody>
-                        {emailList.map((row) =>
-                            <TableRow key={row.from + row.to + row.time}>
+                        {showEmailList.map((row, index) =>
+                            <TableRow key={index}>
                                 <TableCell className="w-50">
                                     <div>
                                         <div className="mr-1">
@@ -111,12 +127,14 @@ const EmailPage = () => {
                     </TableBody>
                 </Table>
             </div>
-            {focusEmail && <EmailContentModal
-                email={focusEmail}
-                isOpen={isEmailContentOpen}
-                onOpenChange={setEmailContentOpen}
-            />}
-        </div>
+            {
+                focusEmail && <EmailContentModal
+                    email={focusEmail}
+                    isOpen={isEmailContentOpen}
+                    onOpenChange={setEmailContentOpen}
+                />
+            }
+        </div >
     )
 };
 
