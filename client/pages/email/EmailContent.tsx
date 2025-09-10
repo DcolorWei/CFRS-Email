@@ -26,10 +26,10 @@ const EmailContentModal = ({
                         </Chip>
                         <div className="text-sm ml-1">
                             <span className="mr-1">
-                                {email.from.split(" ")[0].replace(/[\"]/g, "")}
+                                {email.from.split(" <")[0].replace(/[\"]/g, "")}
                             </span>
                             <span className="text-gray-500">
-                                {email.from.split(" ").length > 1 ? "(" + email.from.split(" ")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
+                                {email.from.split(" <").length > 1 ? "(" + email.from.split(" <")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
                             </span>
                         </div>
                     </div>

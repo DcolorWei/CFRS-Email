@@ -1,27 +1,21 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
-import { EmailImpl } from "../../../shared/impl";
 import { EmailRouter } from "../../api/instance";
-import { addToast, Button, Checkbox, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
+import { Button, Checkbox, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { keyLables } from "./StrategyEnums";
 import EmailContentModal from "./StrategyContent";
 import { WebSocketClientService } from "../../lib/websocket";
 
 const StrategyPage = () => {
-    const wsService = WebSocketClientService.getInstance("ws://localhost:61027");
-
     const [emailList, setEmailList] = useState<string[]>([]);
     const [focusEmail, setFocusEmail] = useState<string | null>(null);
     const [isEmailContentOpen, setEmailContentOpen] = useState(false);
-
-    const [filterTo, setFilterTo] = useState<Array<string>>([]);
 
     async function getRandomEmail() {
         // 复制文本到剪贴板
         await new Promise((resolve) => setTimeout(resolve, 500));
         const email = Date.now().toString(36) + "@noworrytourism.cn";
         navigator.clipboard.writeText(email);
-
     }
     useEffect(() => {
         EmailRouter.queryEmailList({ page: 1 }).then(res => {

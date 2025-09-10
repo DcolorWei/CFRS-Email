@@ -9,7 +9,7 @@ if (rootEl) {
   root.render(
     <React.StrictMode>
       <HeroUIProvider>
-        <ToastProvider placement='top-center' />
+        <ToastProvider placement='top-center' maxVisibleToasts={1} />
         <App />
       </HeroUIProvider>
     </React.StrictMode>,
