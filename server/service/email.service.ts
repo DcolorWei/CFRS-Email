@@ -5,7 +5,6 @@ import { WebSocketServerService } from "../lib/webscoket";
 import { ImapEmailService } from "./email.imap";
 
 const emailRepository = Repository.instance(EmailEntity);
-const emailImapService = new ImapEmailService(saveReceivedEmail)
 
 export async function getEmailList(): Promise<EmailEntity[]> {
     return emailRepository.find();
