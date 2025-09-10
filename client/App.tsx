@@ -1,31 +1,28 @@
 import './App.css';
 
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import StrategyPage from './pages/strategy/StrategyPage';
 import EmailPage from './pages/email/EmailPage';
-import { useEffect } from 'react';
-import { wsService } from './lib/websocket';
+import AuthPage from './pages/auth/AuthPage';
 
-const Main = () => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate("/email")
-  }, []);
-  return (
-    <div>
-    </div>
-  );
-}
+const PrivateRoute = ({ redirectPath = '/auth' }) => {
+  // 检查 localStorage 中的 token
+  const isAuthenticated = !!localStorage.getItem('token');
 
+  return isAuthenticated ? <Outlet /> : <Navigate to={redirectPath} replace />;
+};
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Main />} />
-        <Route path="/email" element={<EmailPage />} />
-        <Route path="/strategy" element={<StrategyPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/email" element={<EmailPage />} />
+          <Route path="/strategy" element={<StrategyPage />} />
+        </Route>
+        <Route path="/" element={<Navigate to="/email" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
