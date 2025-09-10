@@ -12,12 +12,14 @@ import { WebSocketServer } from 'ws';
 // 中间件-各级路由
 import { mounthttp, mountws } from "../lib/mount";
 import { emailController, emailWSController } from "../controller/email.controller";
+import { authController } from "../controller/auth.controller";
 
 const app = express();
 app.use(bodyParser.json()).use(cors());
 
 mounthttp(app, [
-    emailController
+    emailController,
+    authController
 ]);
 
 app.listen(process.env.SERVER_HTTP_PORT, async () => {
