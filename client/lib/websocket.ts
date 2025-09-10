@@ -1,3 +1,4 @@
+import { addToast } from "@heroui/react";
 
 export class WebSocketClientService {
     private static instance: WebSocketClientService;
@@ -23,14 +24,16 @@ export class WebSocketClientService {
             if (success) {
                 const event = new CustomEvent(name, { detail, bubbles: true });
                 window.dispatchEvent(event);
+            } else {
+                addToast({ title: "Error", description: "Request failed" })
             }
         };
     }
 
     public async sendMessage(message: string): Promise<void> {
-        while (!(this.ws && this.ws.readyState === WebSocket.OPEN)) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            this.ws.send(message);
         }
-        this.ws.send(message);
     }
 }
