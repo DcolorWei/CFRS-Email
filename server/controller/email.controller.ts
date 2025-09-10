@@ -5,13 +5,7 @@ import { getEmailByEmail, getEmailList } from "../service/email.service";
 
 async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse> {
     const list: Array<EmailImpl> = [];
-    if (query.to) {
-        list.push(...await getEmailByEmail(query.to));
-    } else if (query.from) {
-        list.push(...await getEmailByEmail(query.from));
-    } else {
-        list.push(...await getEmailList());
-    }
+    list.push(...await getEmailList());
     list.reverse();
     const result: EmailListResponse = {
         list: list,

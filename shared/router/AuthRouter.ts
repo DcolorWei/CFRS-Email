@@ -1,6 +1,6 @@
-import { BaseRouterInstance } from "../lib/decorator";
+import { BaseRouterInstance, BaseWebsocketInstance, } from "../lib/decorator";
 
-export class AuthRouterInstance implements BaseRouterInstance {
+export class AuthRouterInstance extends BaseRouterInstance {
     base = "/api";
     prefix = "/auth";
     router = [
@@ -18,15 +18,13 @@ export class AuthRouterInstance implements BaseRouterInstance {
         }
     ]
 
-    login: (requst: AuthBody) => Promise<LoginToken>
-    register: (requst: AuthBody) => Promise<RegisterResult>
+    login: (request: AuthBody, callback?: Function) => Promise<LoginToken>
+    register: (request: AuthBody, callback?: Function) => Promise<RegisterResult>
 
     constructor(inject: Function, functions?: {
-        login: (requst: AuthBody) => Promise<LoginToken>,
-        register: (requst: AuthBody) => Promise<RegisterResult>
-    }) {
-        inject(this, functions);
-    }
+        login: (request: AuthBody) => Promise<LoginToken>,
+        register: (request: AuthBody) => Promise<RegisterResult>
+    }) { super(); inject(this, functions); }
 }
 
 export interface AuthBody {
@@ -39,6 +37,6 @@ export interface LoginToken {
     success: boolean;
 }
 
-export interface RegisterResult{
+export interface RegisterResult {
     success: boolean;
 }

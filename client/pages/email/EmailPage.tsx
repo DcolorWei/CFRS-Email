@@ -6,6 +6,7 @@ import { addToast, Button, Input, Select, SelectItem, Table, TableBody, TableCel
 import { keyLables } from "./EmailEnums";
 import EmailContentModal from "./EmailContent";
 import { WebSocketClientService } from "../../lib/websocket";
+import { EmailListResponse } from "../../../shared/router/EmailRouter";
 
 const EmailPage = () => {
     const [allEmailList, setAllEmailList] = useState<EmailImpl[]>([]);
@@ -36,14 +37,12 @@ const EmailPage = () => {
         setShowEmailList(els);
     }
 
+
     useEffect(() => {
-        EmailRouter.queryEmailList({ page: 1 });
-        EmailWebsocket.queryEmailList({ page: 1 });
-        window.addEventListener('queryEmailList', function (event) {
-            const detail: { list: Array<EmailImpl> } = event["detail"];
-            setAllEmailList(detail.list);
-            setShowEmailList(detail.list);
-            const accountList = Array.from(new Set(detail.list.map((email) => email.to)));
+        EmailWebsocket.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
+            setAllEmailList(data.list);
+            setShowEmailList(data.list);
+            const accountList = Array.from(new Set(data.list.map((email) => email.to)));
             setAccountList(accountList);
         });
     }, [])
@@ -73,7 +72,7 @@ const EmailPage = () => {
                         </Select>
                     </div>
                     <Button onClick={getRandomEmail} color="primary" className="text-white">
-                        获取新邮箱
+                        新建邮箱
                     </Button>
                 </div>
                 <Table aria-label="table" isStriped>
@@ -90,10 +89,10 @@ const EmailPage = () => {
                                 <TableCell className="w-50">
                                     <div>
                                         <div className="mr-1">
-                                            {row.from.split(" ")[0].replace(/[\"]/g, "")}
+                                            {row.from.split(" <")[0].replace(/[\"]/g, "")}
                                         </div>
                                         <div className="text-xs text-gray-400">
-                                            {row.from.split(" ").length > 1 ? "(" + row.from.split(" ")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
+                                            {row.from.split(" <").length > 1 ? "(" + row.from.split(" <")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
                                         </div>
                                     </div>
                                 </TableCell>
