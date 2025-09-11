@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroui/react": "^2.8.0-beta.5",
+    "@react-email/render": "^1.2.3",
     "@twallpaper/react": "^2.1.2",
     "@types/cors": "^2.8.19",
     "@types/http-proxy-agent": "^4.0.0",
@@ -19,6 +20,7 @@
     "@types/puppeteer-core": "^7.0.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/ws": "^8.18.1",
+    "@wangeditor/editor-for-react": "^1.0.6",
     "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.1.0",
@@ -32,11 +34,10 @@
     "mailparser": "^3.7.4",
     "pg": "^8.16.3",
     "puppeteer-core": "^24.15.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.0",
     "reflect-metadata": "^0.2.2",
+    "resend": "^6.0.3",
     "ws": "^8.18.3"
   },
   "devDependencies": {
