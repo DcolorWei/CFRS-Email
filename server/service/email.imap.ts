@@ -103,7 +103,6 @@ export class ImapEmailService {
                     resolve(uids);
                 });
             });
-            console.log(new Date(), 'Alive Success, fetch unseens:', unseens.length);
         }, 10 * 60 * 1000); // 每10分钟一次
     }
 }

@@ -1,3 +1,6 @@
+export interface BaseRequest {
+    auth?: string;
+}
 export type Route = { name: string; path: string; method: string; handler: Function | null; }
 
 export type HTTPMethodConstructor = { name: string; path: string; method: string; handler: Function | null; };
@@ -10,12 +13,12 @@ export class BaseRouterInstance {
         method: string;
         handler: Function | null;
     }>;
-    [key: string]: string | HTTPMethodConstructor[] | ((...args: any) =>  Promise<any>);
+    [key: string]: string | HTTPMethodConstructor[] | ((...args: any) => Promise<any>);
 }
 
 export type WSMethodConstructor = { name: string; type: string; handler: Function | null; };
 
-export interface WSMessage { id: string, name: string, payload: string, type: string }
+export interface WSMessage { id: string, name: string, payload: any, type: string, auth: string }
 
 export class BaseWebsocketInstance {
     methods: Array<WSMethodConstructor>;

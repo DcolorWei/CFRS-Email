@@ -1,9 +1,10 @@
 import './App.css';
 
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import StrategyPage from './pages/strategy/StrategyPage';
-import EmailPage from './pages/email/EmailPage';
+import InboxPage from './pages/inbox/InboxPage';
 import AuthPage from './pages/auth/AuthPage';
+import SenderPage from './pages/send/SendPage';
 
 const PrivateRoute = ({ redirectPath = '/auth' }) => {
   // 检查 localStorage 中的 token
@@ -19,10 +20,11 @@ const App = () => {
         <Route path="/auth" element={<AuthPage />} />
 
         <Route element={<PrivateRoute />}>
-          <Route path="/email" element={<EmailPage />} />
+          <Route path="/inbox" element={<InboxPage />} />
           <Route path="/strategy" element={<StrategyPage />} />
+          <Route path="/send" element={<SenderPage />} />
         </Route>
-        <Route path="/" element={<Navigate to="/email" replace />} />
+        <Route path="/" element={<Navigate to="/inbox" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

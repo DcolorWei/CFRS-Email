@@ -13,10 +13,14 @@ export function aesEncrypt(originalData: string) {
 }
 
 export function aesDecrypt(encryptedData: string) {
+    try {
     const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, iv);
     let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
     decryptedData += decipher.final('utf8');
     return decryptedData;
+    } catch {
+        return null;
+    }
 }
 
 export function hashGenerate(originalData: string) {

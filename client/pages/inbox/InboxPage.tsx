@@ -1,12 +1,13 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
-import { EmailRouter, EmailWebsocket } from "../../api/instance";
-import { addToast, Button, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
-import { keyLables } from "./EmailEnums";
-import EmailContentModal from "./EmailContent";
-import { WebSocketClientService } from "../../lib/websocket";
+import { EmailRouter, StrategyRouter } from "../../api/instance";
+import { addToast, Button, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
+import { keyLables } from "./InboxEnums";
+import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
+import EmailAddStrategyModal from "./InboxAddStrategy";
+import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
 
 const EmailPage = () => {
     const [allEmailList, setAllEmailList] = useState<EmailImpl[]>([]);
@@ -14,37 +15,44 @@ const EmailPage = () => {
 
     const [focusEmail, setFocusEmail] = useState<EmailImpl | null>(null);
     const [isEmailContentOpen, setEmailContentOpen] = useState(false);
+    const [isEmailAddStrategyOpen, setEmailAddStrategyOpen] = useState(false);
 
     const [accountList, setAccountList] = useState<Array<string>>([]);
     const [filterTo, setFilterTo] = useState<Array<string>>([]);
 
-    async function getRandomEmail() {
-        // 复制文本到剪贴板
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const email = Date.now().toString(36) + "@noworrytourism.cn";
-        navigator.clipboard.writeText(email);
-
-        addToast({
-            title: `新邮箱 ${email} 已复制`,
-            color: "success",
-        });
-    }
-
     function setFilter(value: Array<string>) {
         setFilterTo(value);
-        console.log(value);
         const els = allEmailList.filter(i => value.length ? value.includes(i.to) : true);
         setShowEmailList(els);
     }
 
+    function submitAddStrategy(body: StrategyBodyRequest) {
+        StrategyRouter.requestSaveStrategy(body, () => {
+            addToast({ title: "添加成功", color: "primary" });
+            setEmailAddStrategyOpen(false);
+        })
+    }
 
     useEffect(() => {
-        EmailWebsocket.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
+        EmailRouter.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
             setAllEmailList(data.list);
             setShowEmailList(data.list);
             const accountList = Array.from(new Set(data.list.map((email) => email.to)));
             setAccountList(accountList);
         });
+        setInterval(() => {
+            EmailRouter.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
+                if (data.list.length !== allEmailList.length) {
+                    setAllEmailList(data.list);
+
+                    const els = allEmailList.filter(i => filterTo.length ? filterTo.includes(i.to) : true);
+                    setShowEmailList(els);
+
+                    const accountList = Array.from(new Set(data.list.map((email) => email.to)));
+                    setAccountList(accountList);
+                }
+            });
+        }, 10 * 1000)
     }, [])
 
     return (
@@ -71,7 +79,10 @@ const EmailPage = () => {
                             ))}
                         </Select>
                     </div>
-                    <Button onClick={getRandomEmail} color="primary" className="text-white">
+                    <Button
+                        onClick={() => setEmailAddStrategyOpen(true)}
+                        color="primary" variant="bordered" className="text-primary"
+                    >
                         新建邮箱
                     </Button>
                 </div>
@@ -116,7 +127,8 @@ const EmailPage = () => {
                                 <TableCell className="w-20">
                                     <Button
                                         size="sm" color="primary"
-                                        className="h-7 text-white"
+                                        variant="bordered"
+                                        className="h-7 text-primary"
                                         onClick={() => { setEmailContentOpen(true); setFocusEmail(row) }}
                                     >
                                         查看
@@ -132,6 +144,13 @@ const EmailPage = () => {
                     email={focusEmail}
                     isOpen={isEmailContentOpen}
                     onOpenChange={setEmailContentOpen}
+                />
+            }
+            {
+                <EmailAddStrategyModal
+                    isOpen={isEmailAddStrategyOpen}
+                    onOpenChange={setEmailAddStrategyOpen}
+                    onSubmit={submitAddStrategy}
                 />
             }
         </div >
