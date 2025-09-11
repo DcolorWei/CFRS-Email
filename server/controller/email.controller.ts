@@ -1,7 +1,8 @@
 import { EmailImpl } from "../../shared/impl";
-import { EmailListQuery, EmailListResponse, EmailRouterInstance, EmailSenderBody, EmailWebsocketInstance } from "../../shared/router/EmailRouter";
+import { EmailListQuery, EmailListResponse, EmailRouterInstance, EmailSenderBody, EmailSenderResponse, EmailWebsocketInstance } from "../../shared/router/EmailRouter";
 import { inject, injectws } from "../lib/inject";
 import { verifytoken } from "../service/auth.service";
+import { sendEmail } from "../service/email.send";
 import { getEmailList } from "../service/email.service";
 
 async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse> {
@@ -22,8 +23,9 @@ async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse>
     return result;
 }
 
-async function requestSendMail(body: EmailSenderBody):Promise<EmailSenderResponse>{
-
+async function requestSendMail(body: EmailSenderBody): Promise<EmailSenderResponse> {
+    const success = await sendEmail(body);
+    return { success };
 }
 
 export const emailController = new EmailRouterInstance(inject, { queryEmailList, requestSendMail });

@@ -6,8 +6,6 @@ import { sendEmail } from "./email.send";
 const strategyRepository = Repository.instance(StrategyEntity);
 
 export async function getStrategyList(creater: string): Promise<StrategyEntity[]> {
-    console.log("getStrategyList", creater);
-    console.log(strategyRepository.find())
     return strategyRepository.find({ creater });
 }
 
@@ -21,7 +19,7 @@ export async function saveStrategy(email: string, forward: string, callback: str
     } else {
         strategyRepository.insert({ email, forward, callback, comment, creater });
     }
-    const html =`<p>邮箱策略 ${email} 已更新</p><p>该邮箱的所有邮件都将通过本路径向此邮箱转发</p>`
-    sendEmail(forward, "邮箱策略更新", html);
+    const html = `<p>邮箱策略 ${email} 已更新</p><p>该邮箱的所有邮件都将通过本路径向此邮箱转发</p>`
+    sendEmail({ to: forward, subject:"邮箱策略更新", html });
     return true;
 }
