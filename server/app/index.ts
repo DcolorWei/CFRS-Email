@@ -13,12 +13,14 @@ import { WebSocketServer } from 'ws';
 import { mounthttp, mountws } from "../lib/mount";
 import { emailController, emailWSController } from "../controller/email.controller";
 import { authController } from "../controller/auth.controller";
+import { strategyController } from "../controller/strategy.controller";
 
 const app = express();
 app.use(bodyParser.json()).use(cors());
 
 mounthttp(app, [
     emailController,
+    strategyController,
     authController
 ]);
 

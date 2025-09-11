@@ -22,12 +22,13 @@ export function mounthttp(expressApp: Express, controllers: BaseRouterInstance[]
                 throw new Error(`Invalid method ${method} for route ${prefix}${path}. Supported methods are: get, post, put, delete.`);
             }
             expressApp[method](`${base}${prefix}${path}`, async (req: Request, res: Response) => {
+                const auth = req.headers["token"];
                 switch (method) {
                     case "get":
-                        res.send(await handler(req.query));
+                        res.send(await handler({ ...req.query, auth }));
                         break;
                     case "post":
-                        res.send(await handler(req.body));
+                        res.send(await handler({ ...req.body, auth }));
                         break;
                 }
             });
@@ -52,11 +53,14 @@ export function mountws(wss: Server, controllers: BaseWebsocketInstance[]) {
         ws.on('message', async message => {
             // message的结构为name，type，payload
             // 注入方法的目的在于实现这样的流程
-            // 当收到message时，获取id，name，type，payload，此处的name要存在于注入方法的列表中
+            // 当收到message时，获取 name，type，payload，此处的name要存在于注入方法的列表中
             // 若type为single,则立即调用注入方法，执行handle(payload)并返回结果给客户端
             // 若type为continuous,则将name，type，payload保存在listener中，等待服务器同名事件触发后，会持续返回
             const msg: WSMessage = JSON.parse(message.toString());
-            const { name, payload } = msg;
+            const { name, payload, auth } = msg;
+            if (auth && typeof payload === "object") {
+                payload.auth = auth;
+            }
             const { handler, type } = allMethods.find(method => method.name === name)!;
             if (!handler) {
                 const result = JSON.stringify({ success: false, error: "Method not found." });
