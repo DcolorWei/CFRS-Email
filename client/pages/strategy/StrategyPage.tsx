@@ -1,27 +1,29 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
-import { EmailRouter } from "../../api/instance";
+import { StrategyRouter } from "../../api/instance";
 import { Button, Checkbox, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { keyLables } from "./StrategyEnums";
-import EmailContentModal from "./StrategyContent";
-import { WebSocketClientService } from "../../lib/websocket";
+import StrategyContentModal from "./StrategyContent";
+import { StrategyBodyRequest, StrategyListResponse } from "../../../shared/router/StrategyRouter";
+import { StrategyImpl } from "../../../shared/impl";
 
 const StrategyPage = () => {
-    const [emailList, setEmailList] = useState<string[]>([]);
-    const [focusEmail, setFocusEmail] = useState<string | null>(null);
-    const [isEmailContentOpen, setEmailContentOpen] = useState(false);
+    const [strategyList, setStrategyList] = useState<StrategyImpl[]>([]);
+    const [focusStrategy, setFocusStrategy] = useState<StrategyImpl | null>(null);
+    const [isStrategyContentOpen, setStrategyContentOpen] = useState(false);
 
-    async function getRandomEmail() {
-        // 复制文本到剪贴板
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const email = Date.now().toString(36) + "@noworrytourism.cn";
-        navigator.clipboard.writeText(email);
-    }
-    useEffect(() => {
-        EmailRouter.queryEmailList({ page: 1 }).then(res => {
-            const emailSet = new Set(Array.from(res.list.map(i => i.to)));
-            setEmailList(Array.from(emailSet));
+    function submitSaveStrategy(body: StrategyBodyRequest) {
+        StrategyRouter.requestSaveStrategy(body);
+        StrategyRouter.queryStrategyList({ page: 1 }, (res: StrategyListResponse) => {
+            setStrategyContentOpen(false);
+            setStrategyList(res.list);
         });
+    }
+
+    useEffect(() => {
+        StrategyRouter.queryStrategyList({ page: 1 }, (data: StrategyListResponse) => {
+            setStrategyList(data.list);
+        })
     }, [])
 
     return (
@@ -37,12 +39,12 @@ const StrategyPage = () => {
                         })}
                     </TableHeader>
                     <TableBody>
-                        {emailList.map((row) =>
-                            <TableRow key={row}>
+                        {strategyList.map((row, index) =>
+                            <TableRow key={index}>
                                 <TableCell className="w-80">
                                     <div>
                                         <span className="mr-1">
-                                            {row.split(" ")[0].replace(/[\"]/g, "")}
+                                            {row.email.split(" ")[0].replace(/[\"]/g, "")}
                                         </span>
                                     </div>
                                 </TableCell>
@@ -50,14 +52,14 @@ const StrategyPage = () => {
                                     <Checkbox color="primary" className="ml-1" />
                                 </TableCell>
                                 <TableCell className="w-120">
-                                    <div>https://test_api.plumend.cn/callback</div>
+                                    <div>{row.callback}</div>
                                 </TableCell>
                                 <TableCell className="w-120">
-                                    <div className="">
-                                        corfer@yeah.net
-                                    </div>
+                                    <div className="">{row.forward}</div>
                                 </TableCell>
-
+                                <TableCell className="w-120">
+                                    <div className="">{row.comment}</div>
+                                </TableCell>
                                 <TableCell className="w-60">
                                     <div className="text-red-400">
                                         禁用
@@ -67,7 +69,7 @@ const StrategyPage = () => {
                                     <Button
                                         size="sm" color="primary"
                                         className="h-7 text-white font-bold"
-                                        onClick={() => { setEmailContentOpen(true); setFocusEmail(row) }}
+                                        onClick={() => { setStrategyContentOpen(true); setFocusStrategy(row) }}
                                     >
                                         修改
                                     </Button>
@@ -77,10 +79,11 @@ const StrategyPage = () => {
                     </TableBody>
                 </Table>
             </div>
-            {focusEmail && <EmailContentModal
-                email={focusEmail}
-                isOpen={isEmailContentOpen}
-                onOpenChange={setEmailContentOpen}
+            {focusStrategy && <StrategyContentModal
+                email={focusStrategy}
+                isOpen={isStrategyContentOpen}
+                onOpenChange={setStrategyContentOpen}
+                onSubmit={submitSaveStrategy}
             />}
         </div>
     )

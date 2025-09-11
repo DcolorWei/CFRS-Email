@@ -35,7 +35,7 @@ export function injectws(instance: BaseWebsocketInstance) {
         throw new Error("There are duplicate method names in the controller.");
     }
     const host = location.host;
-    const ws = WebSocketClientService.getInstance(`ws://${host}/ws`);
+    const auth = localStorage.getItem("token");
 
     instance.methods.forEach(method => {
         const { name, type } = method;
@@ -44,7 +44,7 @@ export function injectws(instance: BaseWebsocketInstance) {
                 const data = event["detail"];
                 callback && callback(data);
             })
-            const message = JSON.stringify({ name, payload, type })
+            const message = JSON.stringify({ name, payload, type, auth })
             ws.sendMessage(message);
         }
     })
