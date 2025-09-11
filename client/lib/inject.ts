@@ -37,6 +37,8 @@ export function injectws(instance: BaseWebsocketInstance) {
     const host = location.host;
     const auth = localStorage.getItem("token");
 
+    const ws = WebSocketClientService.getInstance(`wss://${host}/ws`);
+
     instance.methods.forEach(method => {
         const { name, type } = method;
         instance[name] = async (payload: string, callback?: Function) => {

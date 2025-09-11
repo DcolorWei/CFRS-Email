@@ -67,8 +67,8 @@ const StrategyPage = () => {
                                 </TableCell>
                                 <TableCell className="w-20">
                                     <Button
-                                        size="sm" color="primary"
-                                        className="h-7 text-white font-bold"
+                                        size="sm" color="primary" variant="bordered"
+                                        className="h-7 text-primary"
                                         onClick={() => { setStrategyContentOpen(true); setFocusStrategy(row) }}
                                     >
                                         修改

@@ -1,12 +1,12 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
-import { EmailRouter, EmailWebsocket, StrategyRouter } from "../../api/instance";
+import { EmailRouter, StrategyRouter } from "../../api/instance";
 import { addToast, Button, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
-import { keyLables } from "./EmailEnums";
-import EmailContentModal from "./EmailContent";
+import { keyLables } from "./InboxEnums";
+import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
-import EmailAddStrategyModal from "./EmailAddStrategy";
+import EmailAddStrategyModal from "./InboxAddStrategy";
 import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
 
 const EmailPage = () => {
@@ -22,7 +22,6 @@ const EmailPage = () => {
 
     function setFilter(value: Array<string>) {
         setFilterTo(value);
-        console.log(value);
         const els = allEmailList.filter(i => value.length ? value.includes(i.to) : true);
         setShowEmailList(els);
     }
@@ -45,7 +44,10 @@ const EmailPage = () => {
             EmailRouter.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
                 if (data.list.length !== allEmailList.length) {
                     setAllEmailList(data.list);
-                    setShowEmailList(data.list);
+
+                    const els = allEmailList.filter(i => filterTo.length ? filterTo.includes(i.to) : true);
+                    setShowEmailList(els);
+
                     const accountList = Array.from(new Set(data.list.map((email) => email.to)));
                     setAccountList(accountList);
                 }
@@ -77,7 +79,10 @@ const EmailPage = () => {
                             ))}
                         </Select>
                     </div>
-                    <Button onClick={() => setEmailAddStrategyOpen(true)} color="primary" className="text-white">
+                    <Button
+                        onClick={() => setEmailAddStrategyOpen(true)}
+                        color="primary" variant="bordered" className="text-primary"
+                    >
                         新建邮箱
                     </Button>
                 </div>
@@ -122,7 +127,8 @@ const EmailPage = () => {
                                 <TableCell className="w-20">
                                     <Button
                                         size="sm" color="primary"
-                                        className="h-7 text-white"
+                                        variant="bordered"
+                                        className="h-7 text-primary"
                                         onClick={() => { setEmailContentOpen(true); setFocusEmail(row) }}
                                     >
                                         查看

@@ -8,7 +8,7 @@ interface props {
     onSubmit: (data: StrategyBodyRequest) => void
 }
 
-const EmailAddStrategyModal = ({
+const InboxAddStrategyModal = ({
     isOpen,
     onOpenChange,
     onSubmit
@@ -24,7 +24,6 @@ const EmailAddStrategyModal = ({
         if (!email || email.toString().includes("@")) {
             return addToast({ title: "邮箱格式错误", color: "danger" })
         }
-        console.log(email, forward, callback, comment);
         onSubmit({
             email: email.toString() + "@noworrytourism.cn",
             forward: forward.toString(),
@@ -108,4 +107,4 @@ const EmailAddStrategyModal = ({
 };
 
 
-export default EmailAddStrategyModal;
+export default InboxAddStrategyModal;
