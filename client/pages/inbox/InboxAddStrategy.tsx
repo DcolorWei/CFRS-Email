@@ -39,7 +39,7 @@ const InboxAddStrategyModal = ({
 
     const ModalBodyContent = () => {
         return (
-            <div className="flex flex-col w-1/2 mx-auto">
+            <div className="flex flex-col w-full md:w-1/2 mx-auto">
                 <Form ref={formRef} onSubmit={handleCustomSubmit}>
                     <Input
                         isRequired
