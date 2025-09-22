@@ -2,12 +2,13 @@ import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
 import { EmailRouter, StrategyRouter } from "../../api/instance";
-import { addToast, Button, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
-import { keyLables } from "./InboxEnums";
+import { addToast, Button, Select, SelectItem } from "@heroui/react";
 import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
 import EmailAddStrategyModal from "./InboxAddStrategy";
 import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
+import InboxTable from "./InboxTable";
+import InboxList from "./InboxList";
 
 const EmailPage = () => {
     const [allEmailList, setAllEmailList] = useState<EmailImpl[]>([]);
@@ -18,10 +19,9 @@ const EmailPage = () => {
     const [isEmailAddStrategyOpen, setEmailAddStrategyOpen] = useState(false);
 
     const [accountList, setAccountList] = useState<Array<string>>([]);
-    const [filterTo, setFilterTo] = useState<Array<string>>([]);
 
     function setFilter(value: Array<string>) {
-        setFilterTo(value);
+        localStorage.setItem("filters", JSON.stringify(value));
         const els = allEmailList.filter(i => value.length ? value.includes(i.to) : true);
         setShowEmailList(els);
     }
@@ -30,29 +30,32 @@ const EmailPage = () => {
         StrategyRouter.requestSaveStrategy(body, () => {
             addToast({ title: "添加成功", color: "primary" });
             setEmailAddStrategyOpen(false);
-        })
+        });
+    }
+
+    // NOTE: callback hell !!!
+    function renderEmail(data: EmailListResponse) {
+        if (localStorage.getItem("pause") === "1") return;
+        setAllEmailList(data.list);
+        const filters = localStorage.getItem("filters");
+        if (!filters) {
+            setShowEmailList(data.list);
+            return;
+        } else {
+            // Filter To with check no-filter-flag
+            const ft = JSON.parse(filters);
+            const nff = ft.length == 0;
+            const els = data.list.filter(i => (nff || ft.includes(i.to)));
+            setShowEmailList(els);
+        }
+
+        const accountList = Array.from(new Set(data.list.map((email) => email.to)));
+        setAccountList(accountList);
     }
 
     useEffect(() => {
-        EmailRouter.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
-            setAllEmailList(data.list);
-            setShowEmailList(data.list);
-            const accountList = Array.from(new Set(data.list.map((email) => email.to)));
-            setAccountList(accountList);
-        });
-        setInterval(() => {
-            EmailRouter.queryEmailList({ page: 1 }, (data: EmailListResponse) => {
-                if (data.list.length !== allEmailList.length) {
-                    setAllEmailList(data.list);
-
-                    const els = allEmailList.filter(i => filterTo.length ? filterTo.includes(i.to) : true);
-                    setShowEmailList(els);
-
-                    const accountList = Array.from(new Set(data.list.map((email) => email.to)));
-                    setAccountList(accountList);
-                }
-            });
-        }, 10 * 1000)
+        EmailRouter.queryEmailList({ page: 1 }, renderEmail);
+        setInterval(() => EmailRouter.queryEmailList({ page: 1 }, renderEmail), 30 * 1000);
     }, [])
 
     return (
@@ -65,10 +68,12 @@ const EmailPage = () => {
                             aria-label="select"
                             variant="bordered"
                             selectionMode="multiple"
-                            className="w-1/3"
-                            label="筛选收件人"
+                            className="w-4/5 md:w-1/3"
+                            label="筛选"
                             size="sm"
-                            selectedKeys={filterTo}
+                            defaultSelectedKeys={
+                                JSON.parse(localStorage.getItem("filters") || "[]")
+                            }
                             onSelectionChange={(value) => setFilter(Array.from(value).map(i => {
                                 console.log(value);
                                 return i.toString();
@@ -80,64 +85,29 @@ const EmailPage = () => {
                         </Select>
                     </div>
                     <Button
-                        onClick={() => setEmailAddStrategyOpen(true)}
+                        onClick={() => {
+                            setEmailAddStrategyOpen(true);
+                            localStorage.setItem("pause", "1");
+                        }}
                         color="primary" variant="bordered" className="text-primary"
                     >
                         新建邮箱
                     </Button>
                 </div>
-                <Table aria-label="table" isStriped>
-                    <TableHeader>
-                        {keyLables.map((item, index) => {
-                            return (
-                                <TableColumn key={index} align="center">{item.label}</TableColumn>
-                            )
-                        })}
-                    </TableHeader>
-                    <TableBody>
-                        {showEmailList.map((row, index) =>
-                            <TableRow key={index}>
-                                <TableCell className="w-50">
-                                    <div>
-                                        <div className="mr-1">
-                                            {row.from.split(" <")[0].replace(/[\"]/g, "")}
-                                        </div>
-                                        <div className="text-xs text-gray-400">
-                                            {row.from.split(" <").length > 1 ? "(" + row.from.split(" <")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="w-50">
-                                    <div>{row.to}</div>
-                                </TableCell>
-                                <TableCell className="80">
-                                    <div>{row.subject}</div>
-                                </TableCell>
-                                <TableCell className="max-w-120">
-                                    <span>{row.text.slice(0, window.innerWidth / 50)}</span>
-                                    <span>{row.text.length > window.innerWidth / 50 ? "......" : ""}</span>
-                                </TableCell>
-
-                                <TableCell className="w-30">
-                                    <div>
-                                        {new Date(Number(row.time)).toLocaleDateString().slice(5) + " "}
-                                        {new Date(Number(row.time)).toLocaleTimeString().slice(0, -3)}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="w-20">
-                                    <Button
-                                        size="sm" color="primary"
-                                        variant="bordered"
-                                        className="h-7 text-primary"
-                                        onClick={() => { setEmailContentOpen(true); setFocusEmail(row) }}
-                                    >
-                                        查看
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                <div className="w-full hidden md:block">
+                    <InboxTable
+                        emailList={showEmailList}
+                        setEmailContentOpen={setEmailContentOpen}
+                        setFocusEmail={setFocusEmail}
+                    />
+                </div>
+                <div className="w-full block sm:hidden">
+                    <InboxList
+                        emailList={showEmailList}
+                        setEmailContentOpen={setEmailContentOpen}
+                        setFocusEmail={setFocusEmail}
+                    />
+                </div>
             </div>
             {
                 focusEmail && <EmailContentModal
@@ -149,7 +119,10 @@ const EmailPage = () => {
             {
                 <EmailAddStrategyModal
                     isOpen={isEmailAddStrategyOpen}
-                    onOpenChange={setEmailAddStrategyOpen}
+                    onOpenChange={(v: boolean) => {
+                        if (!v) localStorage.setItem("pause", "0");
+                        setEmailAddStrategyOpen(v);
+                    }}
                     onSubmit={submitAddStrategy}
                 />
             }

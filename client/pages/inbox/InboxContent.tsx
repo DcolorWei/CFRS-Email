@@ -15,8 +15,8 @@ const InboxContentModal = ({
     const ModalBodyContent = () => {
         return (
             <div className="flex flex-col">
-                <div className="flex flex-row justify-start items-center">
-                    <div className="flex flex-row items-center">
+                <div className="flex flex-col md:flex-row md:justify-start md:items-center">
+                    <div className="flex flex-row items-center mt-1">
                         <Chip color="primary" variant="bordered" className="text-primary">
                             <div className="w-12 text-center">发件人</div>
                         </Chip>
@@ -29,13 +29,13 @@ const InboxContentModal = ({
                             </span>
                         </div>
                     </div>
-                    <div className="flex flex-row items-center ml-5">
+                    <div className="flex flex-row items-center mt-1 md:ml-5">
                         <Chip color="primary" variant="bordered" className="text-primary">
                             <div className="w-12 text-center">收件人</div>
                         </Chip>
                         <div className="text-sm ml-1">{email.to}</div>
                     </div>
-                    <div className="flex flex-row items-center ml-5">
+                    <div className="flex flex-row items-center mt-1 md:ml-5">
                         <Chip color="primary" variant="bordered" className="text-primary">
                             <div className="w-12 text-center">时间</div>
                         </Chip>
