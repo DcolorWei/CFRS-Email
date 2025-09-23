@@ -1,8 +1,9 @@
 import { Header } from "../../components/header/Header";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
 import { EmailRouter, StrategyRouter } from "../../api/instance";
-import { addToast, Button, Select, SelectItem } from "@heroui/react";
+import { addToast, Button, Card, CardBody, CardHeader, Chip, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
+import { keyLables } from "./InboxEnums";
 import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
 import EmailAddStrategyModal from "./InboxAddStrategy";
