@@ -116,7 +116,7 @@ class Repository<T> {
      * @param config An optional object for limiting and offsetting results.
      * @returns An array of matching entities.
      */
-    find(where?: Partial<T>, config?: { limit?: number, offset?: number }): T[] {
+    async find(where?: Partial<T>, config?: { limit?: number, offset?: number }): Promise<T[]> {
         this.initialize();
         const filteredData = this.filterData(where);
         const start = config?.offset || 0;

@@ -20,7 +20,7 @@ const EmailContentModal = ({
         return (
             <div className="flex flex-col">
                 <div className="w-full flex flex-col justify-start items-center gap-1">
-                    <Form className="w-1/2 mx-auto" ref={formRef} onSubmit={handleCustomSubmit}>
+                    <Form className="w-full md:w-1/2 mx-auto" ref={formRef} onSubmit={handleCustomSubmit}>
                         <div className="w-full flex flex-row justify-beyween items-center">
                             <Input
                                 label="邮箱"

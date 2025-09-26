@@ -25,7 +25,7 @@ const InboxAddStrategyModal = ({
             return addToast({ title: "邮箱格式错误", color: "danger" })
         }
         onSubmit({
-            email: email.toString() + "@noworrytourism.cn",
+            email: email.toString(),
             forward: forward.toString(),
             callback: callback.toString(),
             comment: comment.toString()
