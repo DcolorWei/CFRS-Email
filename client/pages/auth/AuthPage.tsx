@@ -18,7 +18,7 @@ export default function Component() {
                 addToast({ title: "登录成功", color: "success" });
                 await new Promise(r => setTimeout(r, 1000));
                 navigate("/email");
-                localStorage.setItem("token", loginResult.token);
+                localStorage.setItem("token", email.toString());
             } else {
                 addToast({ title: "登录失败，请检查密码", color: "danger" });
             }

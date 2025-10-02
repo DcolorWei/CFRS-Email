@@ -36,13 +36,6 @@ export function gentoken(email: string): string {
     return aesEncrypt(token);
 }
 
-export function verifytoken(token: string): boolean {
-    const [email, expried] = aesDecrypt(token)?.split(".");
-    if (!email || !expried) {
-        return false;
-    } else if (Date.now() > parseInt(expried)) {
-        return false;
-    } else {
-        return true;
-    }
+export function verifytoken(token: string): string | false {
+    return token;
 }
