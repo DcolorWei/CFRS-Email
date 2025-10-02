@@ -1,7 +1,7 @@
 # CFRS-Email
 
 ## 项目介绍
-本项目旨在使用 Cloudflare Email + Resend 实现一个自定义邮箱集成服务。支持邮件接收，多邮箱管理，转发策略设置，以及实现发信服务。
+本项目旨在使用 Postfix 实现一个自定义邮箱集成服务。支持邮件接收，多邮箱管理，转发策略设置，以及实现发信服务。
 
 本项目为全栈应用，前端基于 [React](https://react.dev/) [HeroUI](https://heroicons.com/) ，后端基于 [Express](https://expressjs.com/)，使用[TypeScript](https://www.typescriptlang.org/) 进行开发，推荐使用 [Bun](https://bun.sh/)。
 
