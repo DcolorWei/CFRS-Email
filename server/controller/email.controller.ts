@@ -3,7 +3,7 @@ import { EmailListQuery, EmailListResponse, EmailOtpQuery, EmailOtpResponse, Ema
 import { inject, injectws } from "../lib/inject";
 import { verifytoken } from "../service/auth.service";
 import { sendEmail } from "../service/email.send";
-import { getEmailList, getRecentOtp, getRecentUrls } from "../service/email.service";
+import { getEmailList} from "../service/email.service";
 
 async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse> {
     if (!query.auth || !query.page) {
@@ -23,20 +23,10 @@ async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse>
     return result;
 }
 
-async function requestOtp(query: EmailOtpQuery): Promise<EmailOtpResponse> {
-    const otp = await getRecentOtp(query.email) || "";
-    return { otp };
-}
-
-async function requestUrl(query: EmailUrlQuery): Promise<EmailUrlResponse> {
-    const url = await getRecentUrls(query.email, query.keyword) || "";
-    return { url };
-}
-
 async function requestSendMail(body: EmailSenderBody): Promise<EmailSenderResponse> {
     const success = await sendEmail(body);
     return { success };
 }
 
-export const emailController = new EmailRouterInstance(inject, { queryEmailList, requestOtp, requestUrl, requestSendMail });
+export const emailController = new EmailRouterInstance(inject, { queryEmailList, requestSendMail });
 export const emailWSController = new EmailWebsocketInstance(injectws, { queryEmailList });

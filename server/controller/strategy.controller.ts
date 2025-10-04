@@ -22,7 +22,7 @@ async function requestSaveStrategy(query: StrategyBodyRequest): Promise<Strategy
     const verify = verifytoken(query.auth);
     if (!verify) return { success: false }
     if (!query.email.includes("@")) {
-        query.email = query.email + "@" + process.env.RESEND_FROM_HOST;
+        query.email = query.email + "@" + process.env.FROM_HOST;
     }
     const result = await saveStrategy(query.email, query.forward, query.callback, query.comment, verify);
     return { success: result };

@@ -12,18 +12,6 @@ export class EmailRouterInstance extends BaseRouterInstance {
             handler: Function
         },
         {
-            name: "requestOtp",
-            path: "/otp",
-            method: "get",
-            handler: Function
-        },
-        {
-            name: "requestUrl",
-            path: "/url",
-            method: "get",
-            handler: Function
-        },
-        {
             name: "requestSendMail",
             path: "/send",
             method: "post",
@@ -32,14 +20,10 @@ export class EmailRouterInstance extends BaseRouterInstance {
     ]
 
     queryEmailList: (query: EmailListQuery, callback?: Function) => Promise<EmailListResponse>
-    requestOtp: (query: EmailOtpQuery, callback?: Function) => Promise<EmailOtpResponse>
-    requestUrl: (query: EmailUrlQuery, callback?: Function) => Promise<EmailUrlResponse>
     requestSendMail: (query: EmailSenderBody, callback?: Function) => Promise<EmailSenderResponse>
 
     constructor(inject: Function, functions?: {
         queryEmailList: (query: EmailListQuery) => Promise<EmailListResponse>,
-        requestOtp: (query: EmailOtpQuery) => Promise<EmailOtpResponse>,
-    requestUrl: (query: EmailUrlQuery) => Promise<EmailUrlResponse>
         requestSendMail: (query: EmailSenderBody) => Promise<EmailSenderResponse>
     }) { super(); inject(this, functions); }
 }
