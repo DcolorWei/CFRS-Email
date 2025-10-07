@@ -37,7 +37,7 @@ const EmailPage = () => {
     // NOTE: callback hell !!!
     function renderEmail(data: EmailListResponse) {
         if (localStorage.getItem("pause") === "1") return;
-        setAllEmailList(data.list);
+        setAllEmailList(data.list.sort((a, b) => Number(b.time) - Number(a.time)));
         const filters = localStorage.getItem("filters");
         if (!filters) {
             setShowEmailList(data.list);
@@ -55,8 +55,9 @@ const EmailPage = () => {
     }
 
     useEffect(() => {
+        localStorage.setItem("pause", "0");
         EmailRouter.queryEmailList({ page: 1 }, renderEmail);
-        setInterval(() => EmailRouter.queryEmailList({ page: 1 }, renderEmail), 30 * 1000);
+        setInterval(() => EmailRouter.queryEmailList({ page: 1 }, renderEmail), 5 * 1000);
     }, [])
 
     return (
