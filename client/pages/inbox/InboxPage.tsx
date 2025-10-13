@@ -37,6 +37,46 @@ const EmailPage = () => {
     // NOTE: callback hell !!!
     function renderEmail(data: EmailListResponse) {
         if (localStorage.getItem("pause") === "1") return;
+        console.log("renderEmail", data.list.length, allEmailList.length);
+        const originEmailNum = Number(localStorage.getItem("emailNum"));
+        localStorage.setItem("emailNum", data.total.toString());
+
+        if (data.list.length > originEmailNum && originEmailNum > 0) {
+            const AudioContext = window.AudioContext;
+            const audioCtx = new AudioContext();
+
+
+            const notes = [
+                { frequency: 20000, duration: 0.3 },
+                { frequency: 783.99, duration: 0.25 },   // G5
+                { frequency: 659.25, duration: 0.25 },   // E5
+                { frequency: 880.00, duration: 0.25 },   // A5
+                { frequency: 698.46, duration: 0.25 },  // F5
+                { frequency: 1046.5, duration: 0.5 }    // C6
+            ];
+
+            let currentTime = audioCtx.currentTime;
+
+            notes.forEach(note => {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.value = note.frequency;
+                const [attack, release, volume] = [0.05, 0.2, 0.1]
+                gainNode.gain.setValueAtTime(0, currentTime);
+                gainNode.gain.linearRampToValueAtTime(volume, currentTime + attack);
+                gainNode.gain.setValueAtTime(volume, currentTime + note.duration - release);
+                gainNode.gain.linearRampToValueAtTime(0, currentTime + note.duration);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.start(currentTime);
+                oscillator.stop(currentTime + note.duration);
+
+                currentTime += note.duration;
+            });
+        }
         setAllEmailList(data.list.sort((a, b) => Number(b.time) - Number(a.time)));
         const filters = localStorage.getItem("filters");
         if (!filters) {
@@ -56,6 +96,9 @@ const EmailPage = () => {
 
     useEffect(() => {
         localStorage.setItem("pause", "0");
+        if (!localStorage.getItem("emailNum")) {
+            localStorage.setItem("emailNum", "0")
+        }
         EmailRouter.queryEmailList({ page: 1 }, renderEmail);
         setInterval(() => EmailRouter.queryEmailList({ page: 1 }, renderEmail), 5 * 1000);
     }, [])
