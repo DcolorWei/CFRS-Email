@@ -8,10 +8,11 @@ dotenv.config();
 const execAsync = promisify(exec);
 
 export async function sendEmail(body: { name?: string, from?: string, to: string, subject: string, html: string }) {
-    const { name, from, to, subject, html } = body;
-
+    const { name, to, subject, html } = body;
     let fromStr = `System <system@${process.env.FROM_HOST}>`;
-
+    if (name) {
+        fromStr = `${name} <${name}@${process.env.FROM_HOST}>`;
+    }
     // 创建临时文件
     const tempFile = `${Math.random().toString(36).substring(7)}.html`
     try {
