@@ -1,13 +1,28 @@
-import { Button, Card, CardBody, Chip, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
-import { keyLables } from "./StrategyEnums";
-import { StrategyImpl } from "../../../shared/impl";
+import { addToast, Button, Card, CardBody, Chip, closeAll } from "@heroui/react";
 
 const StrategyList = (params: {
     strategyList: Array<any>,
     setStrategyContentOpen: Function,
-    focusStrategy: Function
+    focusStrategy: Function,
+    deleteStrategy: Function
 }) => {
-    const { strategyList, setStrategyContentOpen, focusStrategy } = params;
+    const { strategyList, setStrategyContentOpen, focusStrategy, deleteStrategy } = params;
+
+    function toDelete(email: any) {
+        addToast({
+            title: "仅删除策略，邮箱仍会保留",
+            hideIcon: true,
+            hideCloseButton: true,
+            endContent: (
+                <Button
+                    color="danger" size="sm" variant="bordered"
+                    onClick={() => { deleteStrategy(email); closeAll(); }}
+                >
+                    确认删除
+                </Button>
+            ),
+        })
+    }
     return (
         <div id="strategy-list" className="flex flex-col">
             {strategyList.map(email => {
@@ -35,16 +50,26 @@ const StrategyList = (params: {
                                     <Chip color="primary" variant="bordered" className="text-primary">
                                         <div className="w-8 text-center">回调</div>
                                     </Chip>
-                                    <div className="text-sm ml-1">{email.callback}</div>
+                                    <div className="text-sm ml-1">{email.callback.length ? "已设置" : "未设置"}</div>
                                 </div>
-                                <Button
-                                    size="sm" color="primary"
-                                    variant="bordered"
-                                    className="h-7 text-primary"
-                                    onClick={() => { setStrategyContentOpen(true); focusStrategy(email) }}
-                                >
-                                    查看
-                                </Button>
+                                <div className="flex flex-row items-center">
+                                    <Button
+                                        size="sm" color="primary"
+                                        variant="bordered"
+                                        className="h-7 mr-1 text-primary"
+                                        onClick={() => { setStrategyContentOpen(true); focusStrategy(email) }}
+                                    >
+                                        修改
+                                    </Button>
+                                    <Button
+                                        size="sm" color="danger" variant="bordered"
+                                        className="h-7 text-danger"
+                                        onClick={() => toDelete(email)}
+                                    >
+                                        删除
+                                    </Button>
+                                </div>
+
                             </div>
                         </div>
                     </CardBody>
