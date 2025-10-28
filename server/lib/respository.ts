@@ -4,6 +4,7 @@ import path from 'path';
 
 type Constructor<T> = { new(...args: any[]): T };
 
+const DB_PATH = "email_data"
 
 class Repository<T> {
     public name: string;
@@ -17,7 +18,7 @@ class Repository<T> {
      */
     private constructor(private entityClass: Constructor<T>) {
         this.name = entityClass.name.toLowerCase().replace("entity", "");
-        this.filePath = path.join('./data', `${this.name}.json`);
+        this.filePath = path.join(`./${DB_PATH}`, `${this.name}.json`);
     }
 
     public static instance<T>(
@@ -35,8 +36,8 @@ class Repository<T> {
         }
 
         try {
-            if (!fs.existsSync('./data')) {
-                fs.mkdirSync('./data');
+            if (!fs.existsSync(`./${DB_PATH}`)) {
+                fs.mkdirSync(`./${DB_PATH}`);
             }
             if (!fs.existsSync(this.filePath)) {
                 fs.writeFileSync(this.filePath, '[]');

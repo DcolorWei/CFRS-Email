@@ -1,10 +1,8 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { StrategyRouter } from "../../api/instance";
-import { Button, Checkbox, Input, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
-import { keyLables } from "./StrategyEnums";
 import StrategyContentModal from "./StrategyContent";
-import { StrategyBodyRequest, StrategyListResponse } from "../../../shared/router/StrategyRouter";
+import { StrategyBodyRequest, StrategyDeleteRequest, StrategyListResponse } from "../../../shared/router/StrategyRouter";
 import { StrategyImpl } from "../../../shared/impl";
 import StrategyList from "./StrategyList";
 import StrategyTable from "./StrategyTable";
@@ -16,6 +14,15 @@ const StrategyPage = () => {
 
     function submitSaveStrategy(body: StrategyBodyRequest) {
         StrategyRouter.requestSaveStrategy(body);
+        StrategyRouter.queryStrategyList({ page: 1 }, (res: StrategyListResponse) => {
+            setStrategyContentOpen(false);
+            setStrategyList(res.list);
+        });
+    }
+
+    function submitDeleteStrategy(body: StrategyDeleteRequest) {
+        const { email, creater } = body;
+        StrategyRouter.requestDeleteStrategy({ email, creater });
         StrategyRouter.queryStrategyList({ page: 1 }, (res: StrategyListResponse) => {
             setStrategyContentOpen(false);
             setStrategyList(res.list);
@@ -37,6 +44,7 @@ const StrategyPage = () => {
                         strategyList={strategyList}
                         setStrategyContentOpen={setStrategyContentOpen}
                         focusStrategy={setFocusStrategy}
+                        deleteStrategy={submitDeleteStrategy}
                     />
                 </div>
                 <div className="w-full block sm:hidden">
@@ -44,6 +52,7 @@ const StrategyPage = () => {
                         strategyList={strategyList}
                         setStrategyContentOpen={setStrategyContentOpen}
                         focusStrategy={setFocusStrategy}
+                        deleteStrategy={submitDeleteStrategy}
                     />
                 </div>
             </div>

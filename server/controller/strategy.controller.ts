@@ -1,7 +1,7 @@
-import { StrategyBodyRequest, StrategyListQuery, StrategyListResponse, StrategyRouterInstance, StrategySaveResponse } from "../../shared/router/StrategyRouter";
+import { StrategyBodyRequest, StrategyDeleteRequest, StrategyDeleteResponse, StrategyListQuery, StrategyListResponse, StrategyRouterInstance, StrategySaveResponse } from "../../shared/router/StrategyRouter";
 import { inject, injectws } from "../lib/inject";
 import { verifytoken } from "../service/auth.service";
-import { getStrategyList, saveStrategy } from "../service/strategy.service";
+import { deleteStrategy, getStrategyList, saveStrategy } from "../service/strategy.service";
 
 async function queryStrategyList(query: StrategyListQuery): Promise<StrategyListResponse> {
     if (!query.auth || !query.page) {
@@ -28,4 +28,14 @@ async function requestSaveStrategy(query: StrategyBodyRequest): Promise<Strategy
     return { success: result };
 }
 
-export const strategyController = new StrategyRouterInstance(inject, { queryStrategyList, requestSaveStrategy });
+async function requestDeleteStrategy(query: StrategyDeleteRequest): Promise<StrategyDeleteResponse> {
+    if (!query.auth) {
+        return { success: false }
+    }
+    const verify = verifytoken(query.auth);
+    if (!verify) return { success: false }
+    const result = await deleteStrategy(query.email, verify);
+    return { success: result };
+}
+
+export const strategyController = new StrategyRouterInstance(inject, { queryStrategyList, requestSaveStrategy, requestDeleteStrategy });
