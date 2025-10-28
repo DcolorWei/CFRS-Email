@@ -31,7 +31,7 @@ export const MenuComp = ({ now }: { now?: string }) => {
             <div className="w-15 h-12 flex items-center justify-center cursor-pointer" onClick={onOpen}>
                 <MenuIcon />
             </div>
-            <Drawer isOpen={isOpen} onOpenChange={onOpenChange} className="rounded-none w-96" placement="left">
+            <Drawer isOpen={isOpen} onOpenChange={onOpenChange} className="rounded-none w-60 md:w-96" placement="left">
                 <DrawerContent>
                     {(onClose: any) => (
                         <>

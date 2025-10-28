@@ -2,7 +2,7 @@ import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
 import { EmailRouter, StrategyRouter } from "../../api/instance";
-import { addToast, Button, Select, SelectItem } from "@heroui/react";
+import { addToast, Button, closeAll, Select, SelectItem } from "@heroui/react";
 import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
 import EmailAddStrategyModal from "./InboxAddStrategy";
@@ -29,7 +29,12 @@ const EmailPage = () => {
 
     function submitAddStrategy(body: StrategyBodyRequest) {
         StrategyRouter.requestSaveStrategy(body, () => {
-            addToast({ title: "添加成功", color: "primary" });
+            addToast({
+                title: "添加成功",
+                color: "primary",
+                hideCloseButton: true,
+                endContent: (<div onClick={closeAll}>✖</div>)
+            });
             setEmailAddStrategyOpen(false);
         });
     }
