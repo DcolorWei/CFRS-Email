@@ -1,5 +1,6 @@
 import { EmailImpl } from "../../../shared/impl";
-import {  Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import { formatEmail } from "../../methods/format";
 
 interface props {
     email: EmailImpl,
@@ -16,24 +17,25 @@ const InboxContentModal = ({
         return (
             <div className="flex flex-col">
                 <div className="flex flex-col md:flex-row md:justify-start md:items-center">
-                    <div className="flex flex-row items-center mt-1">
+                    <div className="flex flex-row items-center mt-1 overflow-x-hidden">
                         <Chip color="primary" variant="bordered" className="text-primary">
                             <div className="w-12 text-center">发件人</div>
                         </Chip>
                         <div className="text-sm ml-1">
-                            <span className="mr-1">
-                                {email.from.split(" <")[0].replace(/[\"]/g, "")}
-                            </span>
-                            <span className="text-gray-500">
-                                {email.from.split(" <").length > 1 ? "(" + email.from.split(" <")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
+                            <span className="text-sm">
+                                {formatEmail(email.from).email}
                             </span>
                         </div>
                     </div>
-                    <div className="flex flex-row items-center mt-1 md:ml-5">
+                    <div className="flex flex-row items-center mt-1 md:ml-5 overflow-x-hidden">
                         <Chip color="primary" variant="bordered" className="text-primary">
                             <div className="w-12 text-center">收件人</div>
                         </Chip>
-                        <div className="text-sm ml-1">{email.to}</div>
+                        <div className="text-sm ml-1">
+                            <span className="text-sm">
+                                {formatEmail(email.to).email}
+                            </span>
+                        </div>
                     </div>
                     <div className="flex flex-row items-center mt-1 md:ml-5">
                         <Chip color="primary" variant="bordered" className="text-primary">
