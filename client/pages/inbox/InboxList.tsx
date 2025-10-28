@@ -1,5 +1,6 @@
 import { Button, Card, CardBody, Chip, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { keyLables } from "./InboxEnums";
+import { formatEmail } from "../../methods/format";
 
 
 const InboxList = (params: {
@@ -18,24 +19,28 @@ const InboxList = (params: {
                             {new Date(Number(email.time)).toLocaleTimeString().slice(0, -3)}
                         </div>
                         <div className="flex flex-col md:flex-row md:justify-start md:items-center">
-                            <div className="flex flex-row items-center mt-1">
+                            <div className="flex flex-row items-center mt-1 overflow-x-hidden">
                                 <Chip color="primary" variant="bordered" className="text-primary">
                                     <div className="w-8 text-center">发件</div>
                                 </Chip>
                                 <div className="text-sm ml-1">
-                                    <span className="mr-1">
-                                        {email.from.split(" <")[0].replace(/[\"]/g, "")}
+                                    <span className="mr-1 whitespace-nowrap">
+                                        {formatEmail(email.from).name}
                                     </span>
-                                    <span className="text-gray-500">
-                                        {email.from.split(" <").length > 1 ? "(" + email.from.split(" <")?.[1]?.replace(/[<>]/g, "") + ")" : ""}
+                                    <span className="text-gray-500 whitespace-nowrap">
+                                        ({formatEmail(email.from).email})
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex flex-row items-center mt-1 md:ml-5">
+                            <div className="flex flex-row items-center mt-1 md:ml-5 overflow-x-hidden">
                                 <Chip color="primary" variant="bordered" className="text-primary">
                                     <div className="w-8 text-center">收件</div>
                                 </Chip>
-                                <div className="text-sm ml-1">{email.to}</div>
+                                <div className="text-sm ml-1">
+                                    <span className="whitespace-nowrap">
+                                        {formatEmail(email.to).email}
+                                    </span>
+                                </div>
                             </div>
                             <div className="flex flex-row justify-between items-center mt-1 md:ml-5">
                                 <div className="flex flex-row items-center">
