@@ -41,7 +41,7 @@ export function groupConsecutiveDates(dateStrings: string[]): string[][] {
 
     result.push(formatGroup(currentGroup));
 
-    function formatGroup(group) {
+    function formatGroup(group: Date[]) {
         return group.length > 1
             ? [formatDate(group[0]), formatDate(group[group.length - 1])]
             : [formatDate(group[0])];
