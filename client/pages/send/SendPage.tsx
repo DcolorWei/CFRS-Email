@@ -66,7 +66,7 @@ const SenderPage = () => {
                         variant="underlined"
                         endContent={<div className="w-full text-sm text-gray-600">{emailhost}</div>}
                         value={name}
-                        onValueChange={setName}
+                        onValueChange={e => setName(e.toLocaleLowerCase())}
                     />
                     <Button
                         color={(justSend || !name.length) ? "default" : "primary"}

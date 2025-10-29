@@ -11,7 +11,7 @@ async function queryStrategyList(query: StrategyListQuery): Promise<StrategyList
     if (!email) {
         return { list: [], total: 0 }
     }
-    const list = await getStrategyList(email);
+    const list = await getStrategyList(email.toLocaleLowerCase());
     return { list, total: list.length };
 }
 
@@ -24,6 +24,7 @@ async function requestSaveStrategy(query: StrategyBodyRequest): Promise<Strategy
     if (!query.email.includes("@")) {
         query.email = query.email + "@" + process.env.FROM_HOST;
     }
+    query.email = query.email.toLocaleLowerCase();
     const result = await saveStrategy(query.email, query.forward, query.callback, query.comment, verify);
     return { success: result };
 }
