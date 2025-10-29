@@ -39,6 +39,25 @@ const StrategyPage = () => {
         <div className="max-w-screen">
             <Header name="邮箱策略" />
             <div className="w-full flex flex-col flex-wrap px-[5vw] pt-6">
+                <div className="w-full flex flex-row justify-between items-center mb-4">
+                    <Input
+                        className="w-3/4 md:w-1/4"
+                        size="sm"
+                        label="默认转发邮箱"
+                        variant="bordered"
+                        defaultValue={localStorage.getItem("default_forward") || ""}
+                        onValueChange={(v) => localStorage.setItem("default_forward", v)}
+                    />
+                    <Button
+                        onClick={() => {
+                            setEmailAddStrategyOpen(true);
+                            localStorage.setItem("pause", "1");
+                        }}
+                        color="primary" variant="bordered" className="ml-2 text-primary"
+                    >
+                        新建策略
+                    </Button>
+                </div>
                 <div className="w-full hidden md:block">
                     <StrategyTable
                         strategyList={strategyList}
