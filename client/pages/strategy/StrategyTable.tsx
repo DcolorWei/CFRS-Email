@@ -1,5 +1,6 @@
 import { addToast, Button, Checkbox, closeAll, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { keyLables } from "./StrategyEnums";
+import { useState } from "react";
 
 const StrategyTable = (params: {
     strategyList: Array<any>,
@@ -8,6 +9,7 @@ const StrategyTable = (params: {
     deleteStrategy: Function
 }) => {
     const { strategyList, setStrategyContentOpen, focusStrategy, deleteStrategy } = params;
+    const [isEmailAddStrategyOpen, setEmailAddStrategyOpen] = useState(false);
 
     function toDelete(email: any) {
         addToast({
@@ -44,9 +46,6 @@ const StrategyTable = (params: {
                                 </span>
                             </div>
                         </TableCell>
-                        <TableCell className="w-40">
-                            <Checkbox disabled color="primary" className="ml-1" />
-                        </TableCell>
                         <TableCell className="w-80">
                             <div>{row.callback}</div>
                         </TableCell>
@@ -56,12 +55,7 @@ const StrategyTable = (params: {
                         <TableCell className="">
                             <div className="">{row.comment}</div>
                         </TableCell>
-                        <TableCell className="w-60">
-                            <div className="text-red-400">
-                                禁用
-                            </div>
-                        </TableCell>
-                        <TableCell className="w-60 flex flex-row justify-center">
+                        <TableCell className="flex flex-row justify-center">
                             <Button
                                 size="sm" color="primary" variant="bordered"
                                 className="mr-1 h-7 text-primary"

@@ -13,7 +13,7 @@ export class BaseRouterInstance {
         method: string;
         handler: Function | null;
     }>;
-    [key: string]: string | HTTPMethodConstructor[] | ((...args: any) => Promise<any>);
+    [key: string]: string | Function | HTTPMethodConstructor[] | ((...args: any) => Promise<any>);
 }
 
 export type WSMethodConstructor = { name: string; type: string; handler: Function | null; };
@@ -22,5 +22,5 @@ export interface WSMessage { id: string, name: string, payload: any, type: strin
 
 export class BaseWebsocketInstance {
     methods: Array<WSMethodConstructor>;
-    [key: string]: WSMethodConstructor[] | ((...args: any) => Promise<any>);
+    [key: string]: Function | WSMethodConstructor[] | ((...args: any) => Promise<any>);
 }
