@@ -5,7 +5,7 @@ import { EmailRouter, StrategyRouter } from "../../api/instance";
 import { addToast, Button, closeAll, Select, SelectItem } from "@heroui/react";
 import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
-import EmailAddStrategyModal from "./InboxAddStrategy";
+import InboxAddStrategy from "./InboxAddStrategy";
 import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
 import { notify } from "../../methods/notify";
 import InboxTable from "./InboxTable";
@@ -135,13 +135,16 @@ const EmailPage = () => {
                 />
             }
             {
-                <EmailAddStrategyModal
+                <InboxAddStrategy
                     isOpen={isEmailAddStrategyOpen}
                     onOpenChange={(v: boolean) => {
-                        if (!v) localStorage.setItem("pause", "0");
                         setEmailAddStrategyOpen(v);
+                        if (!v) localStorage.setItem("pause", "0");
                     }}
-                    onSubmit={submitAddStrategy}
+                    onSubmit={(data) => {
+                        submitAddStrategy(data);
+                        localStorage.setItem("pause", "0");
+                    }}
                 />
             }
         </div >

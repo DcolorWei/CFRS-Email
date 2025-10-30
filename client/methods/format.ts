@@ -17,5 +17,5 @@ export function formatEmail(emailText: string): { name: string, email: string } 
     } else {
         email = emailText;
     }
-    return { name, email };
+    return { name, email: email.toLocaleLowerCase() };
 }

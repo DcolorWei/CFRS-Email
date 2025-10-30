@@ -6,14 +6,41 @@ import { StrategyBodyRequest, StrategyDeleteRequest, StrategyListResponse } from
 import { StrategyImpl } from "../../../shared/impl";
 import StrategyList from "./StrategyList";
 import StrategyTable from "./StrategyTable";
+import { addToast, Button, closeAll, Input } from "@heroui/react";
+import InboxAddStrategy from "../inbox/InboxAddStrategy";
 
 const StrategyPage = () => {
     const [strategyList, setStrategyList] = useState<StrategyImpl[]>([]);
     const [focusStrategy, setFocusStrategy] = useState<StrategyImpl | null>(null);
     const [isStrategyContentOpen, setStrategyContentOpen] = useState(false);
+    const [isEmailAddStrategyOpen, setEmailAddStrategyOpen] = useState(false);
+
+    function submitAddStrategy(body: StrategyBodyRequest) {
+        StrategyRouter.requestSaveStrategy(body, () => {
+            addToast({
+                title: "添加成功",
+                color: "primary",
+                hideCloseButton: true,
+                endContent: (<div onClick={closeAll}>✖</div>)
+            });
+            setEmailAddStrategyOpen(false);
+        });
+        StrategyRouter.queryStrategyList({ page: 1 }, (res: StrategyListResponse) => {
+            setStrategyContentOpen(false);
+            setStrategyList(res.list);
+        });
+    }
 
     function submitSaveStrategy(body: StrategyBodyRequest) {
-        StrategyRouter.requestSaveStrategy(body);
+        StrategyRouter.requestSaveStrategy(body, () => {
+            addToast({
+                title: "修改成功",
+                color: "primary",
+                hideCloseButton: true,
+                endContent: (<div onClick={closeAll}>✖</div>)
+            });
+            setEmailAddStrategyOpen(false);
+        });
         StrategyRouter.queryStrategyList({ page: 1 }, (res: StrategyListResponse) => {
             setStrategyContentOpen(false);
             setStrategyList(res.list);
@@ -81,6 +108,19 @@ const StrategyPage = () => {
                 onOpenChange={setStrategyContentOpen}
                 onSubmit={submitSaveStrategy}
             />}
+            {
+                <InboxAddStrategy
+                    isOpen={isEmailAddStrategyOpen}
+                    onOpenChange={(v: boolean) => {
+                        setEmailAddStrategyOpen(v);
+                        if (!v) localStorage.setItem("pause", "0");
+                    }}
+                    onSubmit={(data) => {
+                        submitAddStrategy(data);
+                        localStorage.setItem("pause", "0");
+                    }}
+                />
+            }
         </div>
     )
 };
