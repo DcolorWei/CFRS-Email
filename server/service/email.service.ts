@@ -15,7 +15,9 @@ setInterval(async () => {
             email.html = [`<html><body>`,
                 `<p>发件人:${email.from.replace(/[\<\>]/g, "")}</p>`,
                 `<p>收件人:${email.to.replace(/[\<\>]/g, "")}</p>`,
-                `<div>${email.html}<div>`,
+                `<p>主题:${email.subject}</p>`,
+                `<div>${email.text}<div>`,
+                `<p>若无法显示内容，可能是转发限制，请前往平台查看</p>`,
                 `</body></html>`].join("").trim();
             sendEmail({
                 name,
