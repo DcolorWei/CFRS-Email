@@ -19,7 +19,6 @@ setInterval(async () => {
                 `</body></html>`].join("").trim();
             sendEmail({
                 name,
-                from: email.from,
                 to: strategy.forward,
                 subject: email.subject,
                 html: email.html,
@@ -41,6 +40,7 @@ export async function getEmailList(account: string): Promise<EmailImpl[]> {
 }
 
 async function getMailsByName(name: string, latest_flag = false): Promise<EmailImpl[]> {
+    name = name.toLocaleLowerCase();
     const dir = `/home/${name}/Maildir/new`
     if (!fs.existsSync(dir)) {
         return [];

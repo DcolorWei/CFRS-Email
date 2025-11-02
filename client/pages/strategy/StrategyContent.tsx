@@ -46,7 +46,7 @@ const EmailContentModal = ({
                             <Input
                                 label="转发邮箱"
                                 name="forward"
-                                placeholder="默认为本账号"
+                                placeholder={localStorage.getItem("default_forward") || "默认为登录邮箱"}
                                 variant="bordered"
                                 labelPlacement="outside"
                                 defaultValue={email.forward}
@@ -88,8 +88,8 @@ const EmailContentModal = ({
         const { email, forward, callback, comment } = Object.fromEntries(new FormData(formRef.current!).entries());
 
         onSubmit({
-            email: email.toString(),
-            forward: forward.toString(),
+            email: email.toString().toLocaleLowerCase(),
+            forward: forward.toString().length ? forward.toString().toLocaleLowerCase() : localStorage.getItem("default_forward") || "",
             callback: callback.toString(),
             comment: comment.toString()
         })
@@ -104,7 +104,7 @@ const EmailContentModal = ({
             <ModalContent className="md:min-w-[800px]">
                 {(onClose) => (
                     <>
-                        <ModalHeader className="flex flex-col">邮件详情</ModalHeader>
+                        <ModalHeader className="flex flex-col">策略详情</ModalHeader>
                         <ModalBody>
                             <ModalBodyContent />
                         </ModalBody>

@@ -3,7 +3,7 @@ import { EmailListQuery, EmailListResponse, EmailOtpQuery, EmailOtpResponse, Ema
 import { inject, injectws } from "../lib/inject";
 import { verifytoken } from "../service/auth.service";
 import { sendEmail } from "../service/email.send";
-import { getEmailList} from "../service/email.service";
+import { getEmailList } from "../service/email.service";
 
 async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse> {
     if (!query.auth || !query.page) {
@@ -14,7 +14,7 @@ async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse>
         return { list: [], total: 0 }
     }
     const list: Array<EmailImpl> = [];
-    list.push(...await getEmailList(email));
+    list.push(...await getEmailList(email.toLocaleLowerCase()));
     list.reverse();
     const result: EmailListResponse = {
         list: list,

@@ -7,31 +7,41 @@ import fs from 'fs';
 dotenv.config();
 const execAsync = promisify(exec);
 
-export async function sendEmail(body: { name?: string, from?: string, to: string, subject: string, html: string }) {
+import nodemailer from 'nodemailer';
+
+export async function sendEmail(body: { name?: string, to: string, subject: string, html: string }) {
     const { name, to, subject, html } = body;
-    let fromStr = `System <system@${process.env.FROM_HOST}>`;
-    if (name) {
-        fromStr = `${name} <${name}@${process.env.FROM_HOST}>`;
-    }
-    // 创建临时文件
-    const tempFile = `${Math.random().toString(36).substring(7)}.html`
-    try {
-        // 写入 HTML 内容到临时文件
-        fs.writeFileSync(tempFile, html);
 
-        // 使用 mail 命令发送（从文件读取内容）
-        const command = `mail -s "${subject}" -a "From: ${fromStr}" -a "Content-Type: text/html" ${to} < ${tempFile}`;
-        const { stderr } = await execAsync(command);
-
-        if (stderr) {
-            console.error({ error: stderr });
-            return false;
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.resend.com',
+        port: parseInt(process.env.SMTP_PORT || '465'),
+        secure: true, // 465端口使用SSL
+        auth: {
+            user: process.env.SMTP_USER || "resend", // 您的企业邮箱地址
+            pass: process.env.SMTP_PASS || "******"
         }
+    });
+
+    let fromEmail = `system@${process.env.FROM_HOST}`;
+    let fromName = 'System';
+
+    if (name) {
+        fromEmail = `${name}@${process.env.FROM_HOST}`.toLocaleLowerCase();
+        fromName = name;
+    }
+
+    try {
+        const info = await transporter.sendMail({
+            from: `"${fromName}" <${fromEmail}>`,
+            to: to,
+            subject: subject,
+            html: html
+        });
+
+        console.log('邮件发送成功:', info.messageId);
         return true;
     } catch (error) {
-        console.error({ error });
+        console.error('邮件发送失败:', error);
         return false;
-    } finally {
-        fs.unlinkSync(tempFile);
     }
 }

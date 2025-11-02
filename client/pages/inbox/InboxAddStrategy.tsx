@@ -24,9 +24,10 @@ const InboxAddStrategyModal = ({
         if (!email || email.toString().includes("@")) {
             return addToast({ title: "邮箱格式错误", color: "danger" })
         }
+
         onSubmit({
-            email: email.toString(),
-            forward: forward.toString(),
+            email: email.toString().toLocaleLowerCase(),
+            forward: forward.toString().length ? forward.toString().toLocaleLowerCase() : localStorage.getItem("default_forward") || "",
             callback: callback.toString(),
             comment: comment.toString()
         })
@@ -59,7 +60,7 @@ const InboxAddStrategyModal = ({
                         label="转发邮箱"
                         name="forward"
                         labelPlacement="outside"
-                        placeholder="默认为本账号"
+                        placeholder={localStorage.getItem("default_forward") || "默认为登录邮箱"}
                         variant="bordered"
                         className="mb-4"
                     />
