@@ -6,6 +6,9 @@ import { EmailImpl } from "../../shared/impl";
 import { sendEmail } from "./email.send";
 const strategyRepository = Repository.instance(StrategyEntity);
 
+import { config } from "dotenv";
+config();
+
 setInterval(async () => {
     const strategies = await strategyRepository.find();
     strategies.forEach(async strategy => {
@@ -43,18 +46,18 @@ export async function getEmailList(account: string): Promise<EmailImpl[]> {
 
 async function getMailsByName(name: string, latest_flag = false): Promise<EmailImpl[]> {
     name = name.toLocaleLowerCase();
-    const dir = `/home/${name}/Maildir/new`
+    const dir = `${process.env.EMAIL_HOME_PATH || "/home"}/${name}/Maildir/new`
     if (!fs.existsSync(dir)) {
         return [];
     }
     const files = fs.readdirSync(dir).filter(file => {
         if (!latest_flag) return true;
-        const filePath = `/home/${name}/Maildir/new/${file}`;
+        const filePath = `${process.env.EMAIL_HOME_PATH || "/home"}/${name}/Maildir/new/${file}`;
         const fileTime = new Date(fs.statSync(filePath).ctime).getTime();
         return Date.now() - fileTime < 60 * 1000;
     })
     const result = await Promise.all(files.map(async (file, index) => {
-        const filePath = `/home/${name}/Maildir/new/${file}`;
+        const filePath = `${process.env.EMAIL_HOME_PATH || "/home"}/${name}/Maildir/new/${file}`;
         const content = fs.readFileSync(filePath, 'utf8');
         const email = await simpleParser(content);
         if (!email) return null;
