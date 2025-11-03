@@ -10,6 +10,7 @@ import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
 import { notify } from "../../methods/notify";
 import InboxTable from "./InboxTable";
 import InboxList from "./InboxList";
+import { checkUserLive } from "../../methods/status";
 
 const EmailPage = () => {
     const [allEmailList, setAllEmailList] = useState<EmailImpl[]>([]);
@@ -42,7 +43,6 @@ const EmailPage = () => {
     // NOTE: callback hell !!!
     function renderEmail(data: EmailListResponse) {
         if (localStorage.getItem("pause") === "1") return;
-        console.log("renderEmail", data.list.length, allEmailList.length);
         const originEmailNum = Number(localStorage.getItem("emailNum"));
         localStorage.setItem("emailNum", data.total.toString());
 
@@ -56,7 +56,6 @@ const EmailPage = () => {
             setShowEmailList(data.list);
             return;
         } else {
-            // Filter To with check no-filter-flag
             const ft = JSON.parse(filters);
             const nff = ft.length == 0;
             const els = data.list.filter(i => (nff || ft.includes(i.to)));
@@ -73,7 +72,11 @@ const EmailPage = () => {
             localStorage.setItem("emailNum", "0")
         }
         EmailRouter.queryEmailList({ page: 1 }, renderEmail);
-        setInterval(() => EmailRouter.queryEmailList({ page: 1 }, renderEmail), 5 * 1000);
+        setInterval(() => {
+            // 当用户离开页面时，降低邮件查询频率
+            if (!checkUserLive() && Math.random() > 0.1) return;
+            EmailRouter.queryEmailList({ page: 1 }, renderEmail);
+        }, 5 * 1000);
     }, [])
 
     return (
@@ -97,8 +100,8 @@ const EmailPage = () => {
                                 return i.toString();
                             }))}
                         >
-                            {accountList.map((email) => (
-                                <SelectItem key={email}>{email}</SelectItem>
+                            {accountList.map((email, index) => (
+                                <SelectItem key={index}>{email}</SelectItem>
                             ))}
                         </Select>
                     </div>
