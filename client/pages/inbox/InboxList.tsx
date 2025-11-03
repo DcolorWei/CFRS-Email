@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Chip, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import { Button, Card, CardBody, Chip } from "@heroui/react";
 import { keyLables } from "./InboxEnums";
 import { formatEmail } from "../../methods/format";
 
@@ -11,12 +11,12 @@ const InboxList = (params: {
     const { emailList, setEmailContentOpen, setFocusEmail } = params;
     return (
         <div id="email-list" className="flex flex-col">
-            {emailList.map(email => {
-                return (<Card className="w-full max-w-full my-1">
+            {emailList.map((email, index) => {
+                return (<Card key={index} className="w-full max-w-full my-1">
                     <CardBody className="max-w-[90vw] mx-auto">
                         <div className="flex flex-row justify-end text-xs text-gray-400 h-[15px] mb-[-10px]">
-                            {new Date(Number(email.time)).toLocaleDateString().slice(5) + " "}
-                            {new Date(Number(email.time)).toLocaleTimeString().slice(0, -3)}
+                            {new Date(Number(email.time)).toLocaleDateString()?.slice(5) + " "}
+                            {new Date(Number(email.time)).toLocaleTimeString()?.slice(0, -3)}
                         </div>
                         <div className="flex flex-col md:flex-row md:justify-start md:items-center">
                             <div className="flex flex-row items-center mt-1 overflow-x-hidden">

@@ -37,23 +37,30 @@ const InboxTable = (params: {
                         </TableCell>
                         <TableCell className="w-50">
                             <div className="text-sm ml-1">
-                                <span className="whitespace-nowrap">
-                                    {formatEmail(email.to).email}
-                                </span>
+                                {email.to.split(", ").map((item: string, index: number) => {
+                                    return (
+                                        <p key={index} className="whitespace-nowrap">
+                                            <span className="whitespace-nowrap">
+                                                {formatEmail(item).email}
+                                            </span>
+                                        </p>
+                                    )
+                                })}
+
                             </div>
                         </TableCell>
                         <TableCell className="80">
                             <div>{email.subject}</div>
                         </TableCell>
                         <TableCell className="max-w-120">
-                            <span>{email.text.slice(0, window.innerWidth / 50)}</span>
-                            <span>{email.text.length > window.innerWidth / 50 ? "......" : ""}</span>
+                            <span>{email.text?.slice(0, window.innerWidth / 50)}</span>
+                            <span>{email.text?.length > window.innerWidth / 50 ? "......" : ""}</span>
                         </TableCell>
 
                         <TableCell className="w-30">
                             <div>
-                                {new Date(Number(email.time)).toLocaleDateString().slice(5) + " "}
-                                {new Date(Number(email.time)).toLocaleTimeString().slice(0, -3)}
+                                {new Date(Number(email.time)).toLocaleDateString()?.slice(5) + " "}
+                                {new Date(Number(email.time)).toLocaleTimeString()?.slice(0, -3)}
                             </div>
                         </TableCell>
                         <TableCell className="w-20">
