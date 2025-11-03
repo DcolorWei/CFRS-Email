@@ -43,7 +43,7 @@ const InboxContentModal = ({
                         </Chip>
                         <div className="text-sm ml-1">
                             {new Date(Number(email.time)).toLocaleDateString() + " "}
-                            {new Date(Number(email.time)).toLocaleTimeString().slice(0, -3)}
+                            {new Date(Number(email.time)).toLocaleTimeString()?.slice(0, -3)}
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@ const InboxContentModal = ({
                         </Chip>
                         <div
                             className="border-1 border-gray-300 rounded-lg p-2 mt-2 w-full overflow-auto"
-                            dangerouslySetInnerHTML={{ __html: email.html }}
+                            dangerouslySetInnerHTML={{ __html: email.html || email.text }}
                         />
                     </div>
                 </div>
