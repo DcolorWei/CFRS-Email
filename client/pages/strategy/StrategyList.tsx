@@ -48,9 +48,9 @@ const StrategyList = (params: {
                             <div className="flex flex-row justify-between items-center mt-1 md:ml-5">
                                 <div className="flex flex-row items-center">
                                     <Chip color="primary" variant="bordered" className="text-primary">
-                                        <div className="w-8 text-center">回调</div>
+                                        <div className="w-8 text-center">备注</div>
                                     </Chip>
-                                    <div className="text-sm ml-1">{email.callback.length ? "已设置" : "未设置"}</div>
+                                    <div className="text-sm ml-1">{email.comment || "--"}</div>
                                 </div>
                                 <div className="flex flex-row items-center">
                                     <Button

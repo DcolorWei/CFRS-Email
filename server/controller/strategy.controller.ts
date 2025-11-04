@@ -11,7 +11,7 @@ async function queryStrategyList(query: StrategyListQuery): Promise<StrategyList
     if (!email) {
         return { list: [], total: 0 }
     }
-    const list = await getStrategyList(email.toLocaleLowerCase());
+    const list = await getStrategyList();
     return { list, total: list.length };
 }
 

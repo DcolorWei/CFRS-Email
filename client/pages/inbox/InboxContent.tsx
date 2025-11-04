@@ -41,7 +41,7 @@ const InboxContentModal = ({
                         <Chip color="primary" variant="bordered" className="text-primary">
                             <div className="w-12 text-center">时间</div>
                         </Chip>
-                        <div className="text-sm ml-1">
+                        <div className="w-32 text-sm ml-1">
                             {new Date(Number(email.time)).toLocaleDateString() + " "}
                             {new Date(Number(email.time)).toLocaleTimeString()?.slice(0, -3)}
                         </div>

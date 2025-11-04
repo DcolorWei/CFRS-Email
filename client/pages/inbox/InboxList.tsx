@@ -47,7 +47,7 @@ const InboxList = (params: {
                                     <Chip color="primary" variant="bordered" className="text-primary">
                                         <div className="w-8 text-center">主题</div>
                                     </Chip>
-                                    <div className="text-sm ml-1">{email.subject}</div>
+                                    <span className="text-sm ml-1">{email.subject?.slice(0, 32)}</span>
                                 </div>
                                 <Button
                                     size="sm" color="primary"

@@ -1,5 +1,5 @@
 import { EmailImpl } from "../../shared/impl";
-import { EmailListQuery, EmailListResponse, EmailOtpQuery, EmailOtpResponse, EmailRouterInstance, EmailSenderBody, EmailSenderResponse, EmailUrlQuery, EmailUrlResponse, EmailWebsocketInstance } from "../../shared/router/EmailRouter";
+import { EmailListQuery, EmailListResponse, EmailRouterInstance, EmailSenderBody, EmailSenderResponse, EmailUrlQuery, EmailUrlResponse, EmailWebsocketInstance } from "../../shared/router/EmailRouter";
 import { inject, injectws } from "../lib/inject";
 import { verifytoken } from "../service/auth.service";
 import { sendEmail } from "../service/email.send";
@@ -14,7 +14,7 @@ async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse>
         return { list: [], total: 0 }
     }
     const list: Array<EmailImpl> = [];
-    list.push(...await getEmailList(email.toLocaleLowerCase()));
+    list.push(...await getEmailList());
     list.reverse();
     const result: EmailListResponse = {
         list: list,
