@@ -32,8 +32,8 @@ setInterval(async () => {
 
     })
 }, 1000 * 60 * 1);
-export async function getEmailList(account: string): Promise<EmailImpl[]> {
-    const inboxSet = new Set((await strategyRepository.find({ creater: account })).map(item => item.email));
+export async function getEmailList(): Promise<EmailImpl[]> {
+    const inboxSet = new Set((await strategyRepository.find()).map(item => item.email));
     const emailList: EmailImpl[] = [];
     const inboxArray = Array.from(inboxSet);
     for (const email of inboxArray) {

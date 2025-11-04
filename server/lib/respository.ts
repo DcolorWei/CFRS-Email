@@ -122,7 +122,7 @@ class Repository<T> {
         const filteredData = this.filterData(where);
         const start = config?.offset || 0;
         const end = start + (config?.limit || filteredData.length);
-        return filteredData.slice(start, end);
+        return JSON.parse(JSON.stringify(filteredData.slice(start, end)));
     }
 
     /**
@@ -132,7 +132,9 @@ class Repository<T> {
      */
     findOne(where: Partial<T>): T | undefined {
         this.initialize();
-        return this.filterData(where)[0];
+        const entity = this.filterData(where)[0];
+        if (!entity) return undefined;
+        return JSON.parse(JSON.stringify(this.filterData(where)[0]));
     }
 
     /**

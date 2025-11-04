@@ -1,4 +1,5 @@
 import { StrategyImpl } from "../../shared/impl";
+import { AccountEntity } from "../../shared/types/Account";
 import { StrategyEntity } from "../../shared/types/Strategy";
 import Repository from "../lib/respository";
 import { sendEmail } from "./email.send";
@@ -10,9 +11,16 @@ import fs from 'fs';
 const execAsync = promisify(exec);
 
 const strategyRepository = Repository.instance(StrategyEntity);
+const accountRepository = Repository.instance(AccountEntity);
+console.log("strategyRepository", strategyRepository);
 
-export async function getStrategyList(creater: string): Promise<StrategyEntity[]> {
-    return strategyRepository.find({ creater });
+export async function getStrategyList(): Promise<StrategyEntity[]> {
+    const strategies = await strategyRepository.find();
+    const accounts = await accountRepository.find();
+    strategies.forEach(item => {
+        item.creater = accounts.find(item2 => item2.email === item.creater)!.name;
+    });
+    return strategies.reverse();
 }
 
 export async function saveStrategy(email: string, forward: string, callback: string, comment: string, creater: string): Promise<boolean> {
@@ -25,7 +33,7 @@ export async function saveStrategy(email: string, forward: string, callback: str
     } else {
         strategyRepository.insert({ email, forward, callback, comment, creater });
     }
-    if(!fs.existsSync(`/root/create_mail.sh`)){
+    if (!fs.existsSync(`/root/create_mail.sh`)) {
         return true;
     }
     const name = email.split("@")[0];

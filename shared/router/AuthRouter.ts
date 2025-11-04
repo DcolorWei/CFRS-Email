@@ -28,8 +28,10 @@ export class AuthRouterInstance extends BaseRouterInstance {
 }
 
 export interface AuthBody {
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
+    code?: string;
+    name?: string;
 }
 
 export interface LoginToken {
