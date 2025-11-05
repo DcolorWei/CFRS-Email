@@ -1,7 +1,7 @@
 export function checkUserLive() {
     if (localStorage.getItem("action_time")) {
         const time = Number(localStorage.getItem("action_time"));
-        return Date.now() - time > 1000 * 60 * 5
+        return Date.now() - time < 1000 * 60 * 5;
     } else {
         localStorage.setItem("action_time", String(Date.now()));
         return true;
