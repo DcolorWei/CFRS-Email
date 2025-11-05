@@ -76,7 +76,7 @@ const EmailPage = () => {
             // 当用户离开页面时，降低邮件查询频率
             if (!checkUserLive() && Math.random() > 0.1) return;
             EmailRouter.queryEmailList({ page: 1 }, renderEmail);
-        }, 5 * 1000);
+        }, 10 * 1000);
     }, [])
 
     return (
