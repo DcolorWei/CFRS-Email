@@ -1,14 +1,23 @@
 import { AuthBody, AuthRouterInstance, LoginToken, RegisterResult } from "../../shared/router/AuthRouter";
 import { inject, injectws } from "../lib/inject";
-import { loginUser, registerUser } from "../service/auth.service";
+import { loginCode, loginUser, registerUser } from "../service/auth.service";
 
 async function login(request: AuthBody): Promise<LoginToken> {
-    const result = await loginUser(request.email, request.password);
-    return result;
+    const { email, password, code, name } = request;
+    if (code && name) {
+        return await loginCode(code, name);
+    }
+    if (email && password) {
+        return await loginUser(email, password);
+    }
+    return { token: "", success: false };
 }
 
 async function register(request: AuthBody): Promise<RegisterResult> {
-    const result = await registerUser(request.email, request.password);
+    if (!request.email || !request.password) {
+        return { success: false };
+    }
+    const result = await registerUser(request.name || "", request.email, request.password);
     return result;
 }
 

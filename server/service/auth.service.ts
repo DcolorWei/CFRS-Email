@@ -15,17 +15,17 @@ export async function loginUser(email: string, password: string): Promise<LoginT
     }
 }
 
-export async function registerUser(email: string, password: string): Promise<RegisterResult> {
+export async function registerUser(name: string, email: string, password: string): Promise<RegisterResult> {
     const emailItem = accountRepository.findOne({ email });
     if (emailItem) {
         return { success: false };
     }
     password = hashGenerate(password);
-    accountRepository.insert({ email, password });
+    accountRepository.insert({ name, email, password });
     return { success: true };
 }
 
-registerUser("plumend@yeah.net", "wdc20140772")
+registerUser("管理员", "plumend@yeah.net", "wdc20140772");
 
 export function gentoken(email: string): string {
     const expried = Date.now() + 1000 * 60 * 60 * 24;

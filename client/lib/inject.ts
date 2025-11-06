@@ -12,7 +12,7 @@ export function inject(instance: BaseRouterInstance) {
         if (method === "get") {
             instance[name] = async (query: URLSearchParams, callback?: Function) => {
                 window.addEventListener(name, (event) => {
-                    const data = event["detail"];
+                    const data = (event as CustomEvent)["detail"];
                     callback && callback(data);
                 })
                 http.get(name, url, query);
@@ -21,7 +21,7 @@ export function inject(instance: BaseRouterInstance) {
         else if (method === "post") {
             instance[name] = async (body: Record<string, any>, callback?: Function) => {
                 window.addEventListener(name, (event) => {
-                    const data = event["detail"];
+                    const data = (event as CustomEvent)["detail"];
                     callback && callback(data);
                 })
                 http.post(name, url, body);
@@ -43,7 +43,7 @@ export function injectws(instance: BaseWebsocketInstance) {
         const { name, type } = method;
         instance[name] = async (payload: string, callback?: Function) => {
             window.addEventListener(name, (event) => {
-                const data = event["detail"];
+                const data = (event as CustomEvent)["detail"];
                 callback && callback(data);
             })
             const message = JSON.stringify({ name, payload, type, auth })

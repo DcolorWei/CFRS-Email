@@ -47,13 +47,13 @@ const StrategyTable = (params: {
                             </div>
                         </TableCell>
                         <TableCell className="w-80">
-                            <div>{row.callback}</div>
-                        </TableCell>
-                        <TableCell className="w-80">
                             <div className="">{row.forward}</div>
                         </TableCell>
-                        <TableCell className="">
+                        <TableCell className="min-w-32">
                             <div className="">{row.comment}</div>
+                        </TableCell>
+                        <TableCell className="min-w-20">
+                            <div className="">{row.creater}</div>
                         </TableCell>
                         <TableCell className="flex flex-row justify-center">
                             <Button

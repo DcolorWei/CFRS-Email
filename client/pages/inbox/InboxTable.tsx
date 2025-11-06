@@ -49,15 +49,16 @@ const InboxTable = (params: {
 
                             </div>
                         </TableCell>
-                        <TableCell className="80">
-                            <div>{email.subject}</div>
+                        <TableCell className="min-w-60">
+                            <span>{email.subject?.slice(0, 40)}</span>
+                            <span>{email.subject?.length > 40 ? "......" : ""}</span>
                         </TableCell>
                         <TableCell className="max-w-120">
-                            <span>{email.text?.slice(0, window.innerWidth / 50)}</span>
-                            <span>{email.text?.length > window.innerWidth / 50 ? "......" : ""}</span>
+                            <span>{(email.text || email.html)?.slice(0, window.innerWidth / 50)}</span>
+                            <span>{(email.text || email.html)?.length > window.innerWidth / 50 ? "......" : ""}</span>
                         </TableCell>
 
-                        <TableCell className="w-30">
+                        <TableCell className="min-w-28">
                             <div>
                                 {new Date(Number(email.time)).toLocaleDateString()?.slice(5) + " "}
                                 {new Date(Number(email.time)).toLocaleTimeString()?.slice(0, -3)}
