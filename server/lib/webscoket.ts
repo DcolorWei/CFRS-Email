@@ -12,7 +12,6 @@ export class WebSocketServerService {
     private listeners: Array<{
         id: string,
         event: string,
-        handler: Function,
         payload: string
     }> = [];
 
@@ -46,15 +45,13 @@ export class WebSocketServerService {
         if (this.listeners.find(listener => listener.id === id && listener.event === event)) {
             return;
         }
-        this.listeners.push({ id, event, handler, payload });
+        this.listeners.push({ id, event, payload });
         console.log(`[${id}] set event listener: ${event}`)
     }
 
-    public triggerEvent(event: string, payload: string) {
+    public triggerEvent(event: string, payload: boolean | number | string) {
         this.listeners.filter(l => l.event === event).forEach(async listener => {
-            console.log(`[${listener.id}] trigger event: ${event}`);
-            const handler = listener.handler;
-            const result = JSON.stringify({ success: true, name: event, data: await handler(payload) });
+            const result = JSON.stringify({ success: true, name: event, data: payload });
             this.sendMessage(listener.id, result);
         });
     }

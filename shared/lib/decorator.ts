@@ -18,9 +18,9 @@ export class BaseRouterInstance {
 
 export type WSMethodConstructor = { name: string; type: string; handler: Function | null; };
 
-export interface WSMessage { id: string, name: string, payload: any, type: string, auth: string }
+export interface WSMessage { id: string, name: string, payload: boolean | number | string, type: string, auth: string }
 
 export class BaseWebsocketInstance {
     methods: Array<WSMethodConstructor>;
-    [key: string]: Function | WSMethodConstructor[] | ((...args: any) => Promise<any>);
+    [key: string]: Function | WSMethodConstructor[] | ((...args: any) => Promise<boolean | number | string>);
 }
