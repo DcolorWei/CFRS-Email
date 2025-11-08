@@ -1,7 +1,7 @@
 import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
-import { EmailRouter, StrategyRouter } from "../../api/instance";
+import { EmailRouter, EmailWebsocket, StrategyRouter } from "../../api/instance";
 import { addToast, Button, closeAll, Select, SelectItem } from "@heroui/react";
 import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
@@ -15,6 +15,7 @@ import { checkUserLive } from "../../methods/status";
 const EmailPage = () => {
     const [allEmailList, setAllEmailList] = useState<EmailImpl[]>([]);
     const [showEmailList, setShowEmailList] = useState<EmailImpl[]>([]);
+    const [page, setPage] = useState(1);
 
     const [focusEmail, setFocusEmail] = useState<EmailImpl | null>(null);
     const [isEmailContentOpen, setEmailContentOpen] = useState(false);
@@ -71,12 +72,15 @@ const EmailPage = () => {
         if (!localStorage.getItem("emailNum")) {
             localStorage.setItem("emailNum", "0")
         }
-        EmailRouter.queryEmailList({ page: 1 }, renderEmail);
-        setInterval(() => {
-            // 当用户离开页面时，降低邮件查询频率
-            if (!checkUserLive() && Math.random() > 0.1) return;
-            EmailRouter.queryEmailList({ page: 1 }, renderEmail);
-        }, 10 * 1000);
+        EmailRouter.queryEmailList({ page }, renderEmail);
+        EmailWebsocket.checkNewEmail({}, (update: boolean) => {
+            if (update) {
+                notify();
+            }
+            if (page == 1) {
+                EmailRouter.queryEmailList({ page }, renderEmail);
+            }
+        });
     }, [])
 
     return (

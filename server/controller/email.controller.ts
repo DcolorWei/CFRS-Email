@@ -14,7 +14,7 @@ async function queryEmailList(query: EmailListQuery): Promise<EmailListResponse>
         return { list: [], total: 0 }
     }
     const list: Array<EmailImpl> = [];
-    list.push(...await getEmailList());
+    list.push(...await getEmailList(Number(query.page)));
     list.reverse();
     const result: EmailListResponse = {
         list: list,
@@ -28,5 +28,9 @@ async function requestSendMail(body: EmailSenderBody): Promise<EmailSenderRespon
     return { success };
 }
 
+async function checkNewEmail(query: {}): Promise<boolean> {
+    return false;
+}
+
 export const emailController = new EmailRouterInstance(inject, { queryEmailList, requestSendMail });
-export const emailWSController = new EmailWebsocketInstance(injectws, { queryEmailList });
+export const emailWSController = new EmailWebsocketInstance(injectws, { checkNewEmail });
