@@ -37,16 +37,8 @@ const InboxTable = (params: {
                         </TableCell>
                         <TableCell className="w-50">
                             <div className="text-sm ml-1">
-                                {email.to.split(", ").map((item: string, index: number) => {
-                                    return (
-                                        <p key={index} className="whitespace-nowrap">
-                                            <span className="whitespace-nowrap">
-                                                {formatEmail(item).email}
-                                            </span>
-                                        </p>
-                                    )
-                                })}
-
+                                <span>{formatEmail(email.to.split(", ")[0]).email}</span>
+                                <span>{email.to.split(", ").length > 1 ? "👥" : ""}</span>
                             </div>
                         </TableCell>
                         <TableCell className="min-w-60">

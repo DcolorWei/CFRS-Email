@@ -31,14 +31,14 @@ export class EmailRouterInstance extends BaseRouterInstance {
 export class EmailWebsocketInstance extends BaseWebsocketInstance {
     methods = [
         {
-            name: "queryEmailList",
+            name: "checkNewEmail",
             type: "continuous",
             handler: Function
         }
     ];
-    queryEmailList: (query: EmailListQuery, callback?: Function) => Promise<EmailListResponse>;
+    checkNewEmail: (query: {}, callback?: Function) => Promise<boolean>;
     constructor(inject: Function, functions?: {
-        queryEmailList: (query: EmailListQuery) => Promise<EmailListResponse>,
+        checkNewEmail: (query: {}) => Promise<boolean>,
     }) { super(); inject(this, functions); }
 }
 
