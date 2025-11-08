@@ -1,4 +1,4 @@
-import { addToast, Button, Form, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem } from "@heroui/react";
+import { Button, Form, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem } from "@heroui/react";
 import { StrategyImpl } from "../../../shared/impl";
 import { useRef } from "react";
 import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";

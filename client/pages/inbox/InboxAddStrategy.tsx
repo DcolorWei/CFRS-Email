@@ -1,6 +1,7 @@
 import { useRef } from "react";
-import { addToast, Button, Form, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import { Button, Form, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
+import { toast } from "../../methods/notify";
 
 interface props {
     isOpen: boolean,
@@ -22,7 +23,7 @@ const InboxAddStrategyModal = ({
         }
         const { email, forward, callback, comment } = Object.fromEntries(new FormData(formRef.current!).entries());
         if (!email || email.toString().includes("@")) {
-            return addToast({ title: "邮箱格式错误", color: "danger" })
+            return toast({ title: "邮箱格式错误", color: "danger" })
         }
 
         onSubmit({
