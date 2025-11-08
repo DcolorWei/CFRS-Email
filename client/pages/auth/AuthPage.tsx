@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
-import { Button, Input, Checkbox, Link, Form, addToast } from "@heroui/react";
+import React, { useState } from "react";
+import { Button, Input, Link, Form } from "@heroui/react";
 import { AuthRouter } from "../../api/instance";
 import { LoginToken } from "../../../shared/router/AuthRouter";
 import { useNavigate } from "react-router-dom";
+import AuthCodeModal from "./ModalUserChoose";
+import { toast } from "../../methods/notify";
 
 export default function Component() {
     const navigate = useNavigate();
@@ -15,12 +17,12 @@ export default function Component() {
         window.addEventListener("login", async (e) => {
             const loginResult = (e as CustomEvent).detail as LoginToken;
             if (loginResult.success) {
-                addToast({ title: "登录成功", color: "success" });
+                toast({ title: "登录成功", color: "success" });
                 await new Promise(r => setTimeout(r, 1000));
                 navigate("/email");
                 localStorage.setItem("token", email.toString());
             } else {
-                addToast({ title: "登录失败，请检查密码", color: "danger" });
+                toast({ title: "登录失败，请检查密码", color: "danger" });
             }
         })
     };
@@ -57,7 +59,7 @@ export default function Component() {
                     />
                     <div className="flex w-full items-center justify-end px-1 py-2">
                         <Link className="text-default-500 cursor-pointer" size="sm" onClick={
-                            () => addToast({ title: "请联系管理员🙁", color: "danger" })
+                            () => toast({ title: "请联系管理员🙁", color: "danger" })
                         }>
                             忘记密码？
                         </Link>

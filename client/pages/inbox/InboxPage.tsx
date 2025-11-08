@@ -2,12 +2,12 @@ import { Header } from "../../components/header/Header";
 import { useEffect, useState } from "react";
 import { EmailImpl } from "../../../shared/impl";
 import { EmailRouter, EmailWebsocket, StrategyRouter } from "../../api/instance";
-import { addToast, Button, closeAll, Select, SelectItem } from "@heroui/react";
+import { Button, closeAll, Select, SelectItem } from "@heroui/react";
 import EmailContentModal from "./InboxContent";
 import { EmailListResponse } from "../../../shared/router/EmailRouter";
 import InboxAddStrategy from "./InboxAddStrategy";
 import { StrategyBodyRequest } from "../../../shared/router/StrategyRouter";
-import { notify } from "../../methods/notify";
+import { notify, toast } from "../../methods/notify";
 import InboxTable from "./InboxTable";
 import InboxList from "./InboxList";
 import { checkUserLive } from "../../methods/status";
@@ -31,7 +31,7 @@ const EmailPage = () => {
 
     function submitAddStrategy(body: StrategyBodyRequest) {
         StrategyRouter.requestSaveStrategy(body, () => {
-            addToast({
+            toast({
                 title: "添加成功",
                 color: "primary",
                 hideCloseButton: true,
@@ -75,6 +75,7 @@ const EmailPage = () => {
         EmailRouter.queryEmailList({ page }, renderEmail);
         EmailWebsocket.checkNewEmail({}, (update: boolean) => {
             if (update) {
+                toast({ title: "新邮件到达", color: "success" })
                 notify();
             }
             if (page == 1) {

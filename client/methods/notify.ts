@@ -1,7 +1,8 @@
+import { addToast, ToastProps } from "@heroui/react";
+
 export function notify() {
     const AudioContext = window.AudioContext;
     const audioCtx = new AudioContext();
-
 
     const notes = [
         { frequency: 20000, duration: 0.3 },
@@ -33,4 +34,16 @@ export function notify() {
 
         currentTime += note.duration;
     });
+}
+
+export function toast({ ...props }: Partial<ToastProps>) {
+    if (props.title) return;
+    const asciiArray = Array.from(String(props.title)).map(char => char.charCodeAt(0));
+    const decode = asciiArray.reduce((acc, cur) => acc + cur, 0).toString(36).slice(0, 8);
+    if (localStorage.getItem("toast_" + decode) !== decode) {
+        localStorage.setItem("toast_" + decode, decode);
+        props.timeout = 2500;
+        addToast(props)
+        setTimeout(() => localStorage.removeItem("toast" + decode), 5000);
+    }
 }

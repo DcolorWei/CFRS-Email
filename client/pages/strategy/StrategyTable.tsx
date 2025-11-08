@@ -1,6 +1,6 @@
-import { addToast, Button, Checkbox, closeAll, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import { Button, closeAll, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { keyLables } from "./StrategyEnums";
-import { useState } from "react";
+import { toast } from "../../methods/notify";
 
 const StrategyTable = (params: {
     strategyList: Array<any>,
@@ -9,10 +9,9 @@ const StrategyTable = (params: {
     deleteStrategy: Function
 }) => {
     const { strategyList, setStrategyContentOpen, focusStrategy, deleteStrategy } = params;
-    const [isEmailAddStrategyOpen, setEmailAddStrategyOpen] = useState(false);
 
     function toDelete(email: any) {
-        addToast({
+        toast({
             title: "仅删除策略，邮箱仍会保留",
             hideIcon: true,
             hideCloseButton: true,

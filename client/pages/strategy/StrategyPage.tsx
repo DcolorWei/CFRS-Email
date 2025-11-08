@@ -6,8 +6,9 @@ import { StrategyBodyRequest, StrategyDeleteRequest, StrategyListResponse } from
 import { StrategyImpl } from "../../../shared/impl";
 import StrategyList from "./StrategyList";
 import StrategyTable from "./StrategyTable";
-import { addToast, Button, closeAll, Input } from "@heroui/react";
+import { Button, closeAll, Input } from "@heroui/react";
 import InboxAddStrategy from "../inbox/InboxAddStrategy";
+import { toast } from "../../methods/notify";
 
 const StrategyPage = () => {
     const [strategyList, setStrategyList] = useState<StrategyImpl[]>([]);
@@ -17,7 +18,7 @@ const StrategyPage = () => {
 
     function submitAddStrategy(body: StrategyBodyRequest) {
         StrategyRouter.requestSaveStrategy(body, () => {
-            addToast({
+            toast({
                 title: "添加成功",
                 color: "primary",
                 hideCloseButton: true,
@@ -33,7 +34,7 @@ const StrategyPage = () => {
 
     function submitSaveStrategy(body: StrategyBodyRequest) {
         StrategyRouter.requestSaveStrategy(body, () => {
-            addToast({
+            toast({
                 title: "修改成功",
                 color: "primary",
                 hideCloseButton: true,

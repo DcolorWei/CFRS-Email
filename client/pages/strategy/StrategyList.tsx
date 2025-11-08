@@ -1,4 +1,5 @@
-import { addToast, Button, Card, CardBody, Chip, closeAll } from "@heroui/react";
+import { Button, Card, CardBody, Chip, closeAll } from "@heroui/react";
+import { toast } from "../../methods/notify";
 
 const StrategyList = (params: {
     strategyList: Array<any>,
@@ -9,7 +10,7 @@ const StrategyList = (params: {
     const { strategyList, setStrategyContentOpen, focusStrategy, deleteStrategy } = params;
 
     function toDelete(email: any) {
-        addToast({
+        toast({
             title: "仅删除策略，邮箱仍会保留",
             hideIcon: true,
             hideCloseButton: true,
